@@ -34,19 +34,18 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const recievedInitialLLMResponse = useRef(false);
     
-
     useEffect(() => {
 
-        scrollAreaRef.current?.scrollTo({
-            top: scrollAreaRef.current.scrollHeight,
-            behavior: "smooth",
-        });
+        if (scrollAreaRef.current) {
+            scrollAreaRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' }); 
+        }
 
         if (conversation.length > 11) {
             setUserCanMoveToNextFormPage(true);
         }
 
     }, [conversation]);
+
 
     const getLLMConversationWithResponse = async ( usingConversation: Array<LLMConversationMessage> ) => {
         
@@ -67,25 +66,21 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
     }
 
     const sendUserMessageDraft = async () => {
-
-        const newConversation = conversation;
-        newConversation.push(
-            {
-                from: "user", 
-                content: userMessageDraftContent, 
-                visible: true, 
-                timestamp: Date.now()
-            } as LLMConversationMessage
-        )
-
-        setConversation(newConversation)
-
-        setUserMessageDraftContent("");
         
+        const newMessage: LLMConversationMessage = {
+            from: "user", 
+            content: userMessageDraftContent, 
+            visible: true, 
+            timestamp: Date.now()
+        };
+
+        const newConversation = [...conversation, newMessage];
+
+        setConversation(newConversation);
+        setUserMessageDraftContent("");
         setUserCanSendMessage(false);
 
         getLLMConversationWithResponse(newConversation);
-
     }
 
     useEffect(() => {
@@ -110,7 +105,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
 
             <CardContent>
                 <ScrollArea className="pr-4 overflow-y-auto">
-                    <div className="flex flex-col w-[50rem] space-y-4 h-[50vh]" ref={scrollAreaRef}>
+                    <div className="flex flex-col w-[50rem] space-y-4 h-[50vh]">
                         {conversation.map((message, index) => message.visible && (
                             <div className={`${message.from == "model" ? "mr-auto" : "ml-auto"} flex flex-row space-x-2`} id={index.toString()} key={index}>
                                 {message.from == "model" ? (
@@ -130,6 +125,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                                 ) : <></>}
                             </div>
                         ))}
+                        <div ref={scrollAreaRef} />
                     </div>
                 </ScrollArea>
                 
