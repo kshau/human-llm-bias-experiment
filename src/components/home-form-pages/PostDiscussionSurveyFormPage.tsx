@@ -4,7 +4,7 @@ import { HomeFormPageProps } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function PostDiscussionSurveyFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
 

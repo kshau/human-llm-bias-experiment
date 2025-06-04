@@ -29,11 +29,11 @@ export default function Home() {
   }
 
   const formPages = [
-    <SituationPickerFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData}/>, 
-    <PreDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData}/>,
-    <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias}/>, 
-    <SummaryFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData}/>, 
-    <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData}/>
+    <SituationPickerFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="situationPicker"/>, 
+    <PreDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="preDiscussionSurvey"/>,
+    <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias} key="llmConversation"/>, 
+    <SummaryFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="summary"/>, 
+    <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postDiscussionSurvey"/>
   ]
 
   const submitForm = async () => {
