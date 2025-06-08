@@ -5,9 +5,9 @@ export async function POST(request: NextRequest) {
 
     try {
 
-        const { data } = await request.json();
+        const { userFormData } = await request.json();
 
-        const formSubmissionDoc = new FormSubmission({ ...data });
+        const formSubmissionDoc = new FormSubmission({ ...userFormData });
         await formSubmissionDoc.save();
 
         return NextResponse.json({}, { status: 200 });

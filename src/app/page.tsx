@@ -3,8 +3,8 @@
 import { LLMConversationFormPage } from "@/components/home-form-pages/LLMConversationFormPage";
 import { PostDiscussionSurveyFormPage } from "@/components/home-form-pages/PostDiscussionSurveyFormPage";
 import { PreDiscussionSurveyFormPage } from "@/components/home-form-pages/PreDiscussionSurveyPage";
-import { SituationPickerFormPage } from "@/components/home-form-pages/SituationPickerFormPage"
-import { SummaryFormPage } from "@/components/home-form-pages/SummaryFormPage";
+import { ChoseToHitFormPage } from "@/components/home-form-pages/ChoseToHitFormPage"
+import { UserLLMConversationSummaryFormPage } from "@/components/home-form-pages/UserLLMConversationSummaryFormPage";
 import { UserFormData } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react"
@@ -29,20 +29,20 @@ export default function Home() {
   }
 
   const formPages = [
-    <SituationPickerFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="situationPicker"/>, 
+    <ChoseToHitFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="situationPicker"/>, 
     <PreDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="preDiscussionSurvey"/>,
     <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias} key="llmConversation"/>, 
-    <SummaryFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="summary"/>, 
+    <UserLLMConversationSummaryFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="summary"/>, 
     <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postDiscussionSurvey"/>
   ]
 
-  const submitForm = async () => {
-    await axios.post("/api/submitForm", { data: userFormData });
+  const submitUserFormData = async () => {
+    await axios.post("/api/submitUserFormData", { userFormData });
   }
 
   useEffect(() => {
     if (shouldSubmitForm) {
-      submitForm();
+      submitUserFormData();
     }
   }, [shouldSubmitForm]);
 

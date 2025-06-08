@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import {  useState } from "react";
 
-export function SummaryFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
+export function UserLLMConversationSummaryFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
 
     const [userSummary, setUserSummary] = useState<string>("");
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { bias, biasLLMPrompts, LLMConversationMessage, UserFormData } from "@/lib/utils";
+import { bias, llmBiasPrompts, LLMConversationMessage, UserFormData } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
@@ -18,10 +18,10 @@ export interface LLMConversationFormPageProps {
 
 export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bias } : LLMConversationFormPageProps) {
 
-    const [conversation, setConversation] = useState<Array<LLMConversationMessage>>([
+    const [llmConversationMessages, setLLMConversationMessages] = useState<Array<LLMConversationMessage>>([
         {
             from: "user", 
-            content: biasLLMPrompts[bias as bias],
+            content: llmBiasPrompts[bias as bias],
             visible: false, 
             timestamp: Date.now()
         }
@@ -31,31 +31,31 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
     const [userCanSendMessage, setUserCanSendMessage] = useState<boolean>(false);
     const [userCanMoveToNextFormPage, setUserCanMoveToNextFormPage] = useState<boolean>(false);
 
-    const scrollAreaRef = useRef<HTMLDivElement>(null);
-    const recievedInitialLLMResponse = useRef(false);
+    const llmConversationScrollAreaRef = useRef<HTMLDivElement>(null);
+    const recievedInitialLLMConversationMesage = useRef(false);
     
     useEffect(() => {
 
-        if (scrollAreaRef.current) {
-            scrollAreaRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' }); 
+        if (llmConversationScrollAreaRef.current) {
+            llmConversationScrollAreaRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' }); 
         }
 
-        if (conversation.length > 11) {
+        if (llmConversationMessages.length > 11) {
             setUserCanMoveToNextFormPage(true);
         }
 
-    }, [conversation]);
+    }, [llmConversationMessages]);
 
 
-    const getLLMConversationWithResponse = async ( usingConversation: Array<LLMConversationMessage> ) => {
+    const getLLMConversationResponse = async (llmConversationMessages_: Array<LLMConversationMessage>) => {
         
-        const res = await axios.post("/api/getLLMConversationResponse", { conversation: usingConversation });
+        const res = await axios.post("/api/getLLMConversationResponse", { llmConversationMessages: llmConversationMessages_ });
 
-        setConversation(o => [
+        setLLMConversationMessages(o => [
             ...o, 
             {
                 from: "model", 
-                content: res.data.responseFromLLM, 
+                content: res.data.llmConversationResponse, 
                 visible: true, 
                 timestamp: Date.now()
             }
@@ -67,26 +67,26 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
 
     const sendUserMessageDraft = async () => {
         
-        const newMessage: LLMConversationMessage = {
+        const newLLMConversationMessage: LLMConversationMessage = {
             from: "user", 
             content: userMessageDraftContent, 
             visible: true, 
             timestamp: Date.now()
         };
 
-        const newConversation = [...conversation, newMessage];
+        const newLLMConversationMessages = [...llmConversationMessages, newLLMConversationMessage];
 
-        setConversation(newConversation);
+        setLLMConversationMessages(newLLMConversationMessages);
         setUserMessageDraftContent("");
         setUserCanSendMessage(false);
 
-        getLLMConversationWithResponse(newConversation);
+        getLLMConversationResponse(newLLMConversationMessages);
     }
 
     useEffect(() => {
-        if (!recievedInitialLLMResponse.current) {
-            getLLMConversationWithResponse(conversation);
-            recievedInitialLLMResponse.current = true;
+        if (!recievedInitialLLMConversationMesage.current) {
+            getLLMConversationResponse(llmConversationMessages);
+            recievedInitialLLMConversationMesage.current = true;
         }
     }, []);
 
@@ -106,7 +106,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
             <CardContent>
                 <ScrollArea className="pr-4 overflow-y-auto">
                     <div className="flex flex-col w-[50rem] space-y-4 h-[50vh]">
-                        {conversation.map((message, index) => message.visible && (
+                        {llmConversationMessages.map((message, index) => message.visible && (
                             <div className={`${message.from == "model" ? "mr-auto" : "ml-auto"} flex flex-row space-x-2`} id={index.toString()} key={index}>
                                 {message.from == "model" ? (
                                     <div className="rounded-full border-black border-1 aspect-square w-8 h-8 flex">
@@ -125,7 +125,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                                 ) : <></>}
                             </div>
                         ))}
-                        <div ref={scrollAreaRef} />
+                        <div ref={llmConversationScrollAreaRef} />
                     </div>
                 </ScrollArea>
                 
@@ -156,7 +156,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                     setUserFormData(o => ({
                         ...o, 
                         conversationWithLLM: {
-                            value: conversation, 
+                            value: llmConversationMessages, 
                             timestamp: Date.now()
                         } 
                     }));

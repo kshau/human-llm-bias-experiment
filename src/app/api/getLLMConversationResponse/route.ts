@@ -4,16 +4,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 const {GOOGLE_GEMINI_API_KEY} = process.env;
 
-async function respondToLLMConversation(conversation: Array<LLMConversationMessage>) {
+async function getLLMConversationResponse(llmConversationMessages: Array<LLMConversationMessage>) {
 
-  const formattedMessages = conversation.map((message: LLMConversationMessage) => ({
+  const formattedLLMConversationMessages = llmConversationMessages.map((message: LLMConversationMessage) => ({
     role: message.from,
     parts: [{ text: message.content }],
   }));
 
   const res = await axios.post(
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-    { contents: formattedMessages },
+    { contents: formattedLLMConversationMessages },
     {
       params: {
         key: GOOGLE_GEMINI_API_KEY,
@@ -34,11 +34,11 @@ export async function POST(request: NextRequest) {
 
     try {
 
-        const { conversation } = await request.json();
+        const { llmConversationMessages } = await request.json();
         
-        const responseFromLLM = await respondToLLMConversation(conversation);
+        const llmConversationResponse = await getLLMConversationResponse(llmConversationMessages);
 
-        return NextResponse.json({ responseFromLLM }, { status: 200 });
+        return NextResponse.json({ llmConversationResponse }, { status: 200 });
 
     }
 

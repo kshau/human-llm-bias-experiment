@@ -11,7 +11,7 @@ import { HomeFormPageProps, UserFormData } from "@/lib/utils"
 import { Dispatch, ReactNode, SetStateAction } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 
-export function SituationPickerFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
+export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
 
   return (
 
@@ -30,7 +30,7 @@ export function SituationPickerFormPage({ goToNextFormPage, setUserFormData } : 
 
             <div className="grid grid-cols-2 gap-2 w-fit">
 
-                <SituationPickerFormPageOptionHoverCard choseToHitOption="barrier" imgSrc="/assets/car-hit-barrier.png" title="Hit The Barrier" description={<div>
+                <ChoseToHitFormPageOptionHoverCard choseToHitOption="barrier" imgSrc="/assets/car-hit-barrier.png" title="Hit The Barrier" description={<div>
                 In this case, the self-driving car with sudden brake failure will continue ahead and crash into a concrete barrier. This will result in deaths of
                 <ul className="list-disc list-inside">
                     <li>1 man</li>
@@ -38,7 +38,7 @@ export function SituationPickerFormPage({ goToNextFormPage, setUserFormData } : 
                 </ul>
                 </div>} goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData}/>
 
-                <SituationPickerFormPageOptionHoverCard choseToHitOption="pedestrians" imgSrc="/assets/car-hit-pedestrians.png" title="Hit The Pedestrians" description={<div>
+                <ChoseToHitFormPageOptionHoverCard choseToHitOption="pedestrians" imgSrc="/assets/car-hit-pedestrians.png" title="Hit The Pedestrians" description={<div>
                 In this case, the self-driving car with sudden brake failure will swerve and drive through a pedestrian crossing in the other lane. This will result in deaths of
                 <ul className="list-disc list-inside">
                     <li>1 female athlete</li>
@@ -57,7 +57,7 @@ export function SituationPickerFormPage({ goToNextFormPage, setUserFormData } : 
 
 }
 
-interface SituationPickerFormPageOptionHoverCardProps {
+interface ChoseToHitFormPageOptionHoverCardProps {
   choseToHitOption: "barrier" | "pedestrians",
   imgSrc: string, 
   title: string, 
@@ -66,7 +66,7 @@ interface SituationPickerFormPageOptionHoverCardProps {
   setUserFormData: Dispatch<SetStateAction<UserFormData>>
 }
 
-function SituationPickerFormPageOptionHoverCard({ choseToHitOption, imgSrc, title, description, goToNextFormPage, setUserFormData } : SituationPickerFormPageOptionHoverCardProps) {
+function ChoseToHitFormPageOptionHoverCard({ choseToHitOption, imgSrc, title, description, goToNextFormPage, setUserFormData } : ChoseToHitFormPageOptionHoverCardProps) {
 
   return (
     <Button className="h-fit hover:cursor-pointer" variant="outline" onClick={() => {
