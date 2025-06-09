@@ -1,6 +1,6 @@
 "use client"
 
-import { bias, llmBiasPrompts, LLMConversationMessage, UserFormData } from "@/lib/utils";
+import { Bias, Block, llmBiasPrompts, LLMConversationMessage, UserFormData } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
@@ -13,15 +13,16 @@ import { ScrollArea } from "../ui/scroll-area";
 export interface LLMConversationFormPageProps {
   goToNextFormPage: CallableFunction, 
   setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
-  bias: bias
+  bias: Bias,
+  block: Block
 }
 
-export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bias } : LLMConversationFormPageProps) {
+export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bias, block } : LLMConversationFormPageProps) {
 
     const [llmConversationMessages, setLLMConversationMessages] = useState<Array<LLMConversationMessage>>([
         {
             from: "user", 
-            content: llmBiasPrompts[bias as bias],
+            content: llmBiasPrompts[bias as Bias],
             visible: false, 
             timestamp: Date.now()
         }
@@ -30,6 +31,8 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
     const [userMessageDraftContent, setUserMessageDraftContent] = useState<string>("");
     const [userCanSendMessage, setUserCanSendMessage] = useState<boolean>(false);
     const [userCanMoveToNextFormPage, setUserCanMoveToNextFormPage] = useState<boolean>(false);
+
+    const [randomUserLLMConversationSummary, setRandomUserLLMConversationSummary] = useState<string | null>(null);
 
     const llmConversationScrollAreaRef = useRef<HTMLDivElement>(null);
     const recievedInitialLLMConversationMesage = useRef(false);
@@ -83,92 +86,140 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
         getLLMConversationResponse(newLLMConversationMessages);
     }
 
+    const getRandomUserLLMConversationSummary = async () => {
+
+        let reqBlockParam;
+
+        switch (block) {
+            case "2":
+                reqBlockParam = "1";
+                break;
+            case "3":
+                reqBlockParam = "2";
+                break;
+        }
+
+        const res = await axios.post("/api/getRandomUserLLMConversationSummary", { bias, block: reqBlockParam });
+        setRandomUserLLMConversationSummary(res.data.userLLMConversationSummary);
+
+    }
+
     useEffect(() => {
+
+        if (block != "1") {
+            getRandomUserLLMConversationSummary();
+        }
+
         if (!recievedInitialLLMConversationMesage.current) {
             getLLMConversationResponse(llmConversationMessages);
             recievedInitialLLMConversationMesage.current = true;
         }
+
     }, []);
 
     return (
 
-        <Card className="w-fit">
+        <div className="space-y-2">
 
-            <CardHeader>
-                <CardTitle className="text-2xl">
-                    Conversation With LLM
-                </CardTitle>
-                <CardDescription>
-                    Discuss your judgement with artificial intelligence.
-                </CardDescription>
-            </CardHeader>
+            {randomUserLLMConversationSummary && (
+                <Card className="w-[50rem]">
 
-            <CardContent>
-                <ScrollArea className="pr-4 overflow-y-auto">
-                    <div className="flex flex-col w-[50rem] space-y-4 h-[50vh]">
-                        {llmConversationMessages.map((message, index) => message.visible && (
-                            <div className={`${message.from == "model" ? "mr-auto" : "ml-auto"} flex flex-row space-x-2`} id={index.toString()} key={index}>
-                                {message.from == "model" ? (
-                                    <div className="rounded-full border-black border-1 aspect-square w-8 h-8 flex">
-                                        <BotIcon className="m-auto" strokeWidth={1}/>
-                                    </div>
-                                ) : <></>}
-                                <span className={`${message.from == "model" ? "bg-primary rounded-t-xl rounded-br-xl rounded-bl-xs" : "bg-muted-foreground rounded-t-xl rounded-bl-xl rounded-br-xs"} text-white p-2 text-sm max-w-[38rem]`}>
-                                    <ReactMarkdown>
-                                        {message.content}
-                                    </ReactMarkdown>
-                                </span>
-                                {message.from == "user" ? (
-                                    <div className="rounded-full border-black border-1 aspect-square w-8 h-8 flex">
-                                        <UserIcon className="m-auto" strokeWidth={1}/>
-                                    </div>
-                                ) : <></>}
-                            </div>
-                        ))}
-                        <div ref={llmConversationScrollAreaRef} />
-                    </div>
-                </ScrollArea>
-                
-                <div className="mt-6 relative max-w-[50rem]">
-                    <Textarea
-                        className="resize-none min-h-[2.5rem] pr-12 w-full"
-                        placeholder="Type a message"
-                        onChange={e => {setUserMessageDraftContent(e.target.value)}}
-                        disabled={!userCanSendMessage || userCanMoveToNextFormPage}
-                        value={userMessageDraftContent}
-                    />
-                    <Button 
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground cursor-pointer h-fit" 
-                        variant="ghost" 
-                        onClick={sendUserMessageDraft} 
-                        disabled={!userCanSendMessage || userMessageDraftContent.length <= 0 || userCanMoveToNextFormPage}
-                    >
-                        <SendHorizonalIcon className="w-5"/>
-                    </Button>
+                    <CardHeader>
+                        <CardTitle className="text-2xl">
+                            Previous Summary
+                        </CardTitle>
+                        <CardDescription>
+                            Summary of a conversation the LLM had with a previous participant with the same LLM bias.
+                        </CardDescription>
+                    </CardHeader>
+
+                    <CardContent>
+                        {randomUserLLMConversationSummary}
+                    </CardContent>
+
+                </Card>
+            )}
+            
+
+            <Card className="w-fit">
+
+                <CardHeader>
+                    <CardTitle className="text-2xl">
+                        Conversation With LLM
+                    </CardTitle>
+                    <CardDescription>
+                        Discuss your judgement with artificial intelligence.
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                    <ScrollArea className="pr-4 overflow-y-auto">
+                        <div className="flex flex-col w-[50rem] space-y-4 h-[50vh]">
+                            {llmConversationMessages.map((message, index) => message.visible && (
+                                <div className={`${message.from == "model" ? "mr-auto" : "ml-auto"} flex flex-row space-x-2`} id={index.toString()} key={index}>
+                                    {message.from == "model" ? (
+                                        <div className="rounded-full border-black border-1 aspect-square w-8 h-8 flex">
+                                            <BotIcon className="m-auto" strokeWidth={1}/>
+                                        </div>
+                                    ) : <></>}
+                                    <span className={`${message.from == "model" ? "bg-primary rounded-t-xl rounded-br-xl rounded-bl-xs" : "bg-muted-foreground rounded-t-xl rounded-bl-xl rounded-br-xs"} text-white p-2 text-sm max-w-[38rem]`}>
+                                        <ReactMarkdown>
+                                            {message.content}
+                                        </ReactMarkdown>
+                                    </span>
+                                    {message.from == "user" ? (
+                                        <div className="rounded-full border-black border-1 aspect-square w-8 h-8 flex">
+                                            <UserIcon className="m-auto" strokeWidth={1}/>
+                                        </div>
+                                    ) : <></>}
+                                </div>
+                            ))}
+                            <div ref={llmConversationScrollAreaRef} />
+                        </div>
+                    </ScrollArea>
                     
-                </div>
+                    <div className="mt-6 relative max-w-[50rem]">
+                        <Textarea
+                            className="resize-none min-h-[2.5rem] pr-12 w-full"
+                            placeholder="Type a message"
+                            onChange={e => {setUserMessageDraftContent(e.target.value)}}
+                            disabled={!userCanSendMessage || userCanMoveToNextFormPage}
+                            value={userMessageDraftContent}
+                        />
+                        <Button 
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground cursor-pointer h-fit" 
+                            variant="ghost" 
+                            onClick={sendUserMessageDraft} 
+                            disabled={!userCanSendMessage || userMessageDraftContent.length <= 0 || userCanMoveToNextFormPage}
+                        >
+                            <SendHorizonalIcon className="w-5"/>
+                        </Button>
+                        
+                    </div>
 
-            </CardContent>
+                </CardContent>
 
-            <CardFooter>
-                <Button className="hover:cursor-pointer" onClick={() => {
+                <CardFooter>
+                    <Button className="hover:cursor-pointer" onClick={() => {
 
-                    setUserFormData(o => ({
-                        ...o, 
-                        conversationWithLLM: {
-                            value: llmConversationMessages, 
-                            timestamp: Date.now()
-                        } 
-                    }));
+                        setUserFormData(o => ({
+                            ...o, 
+                            llmConversationMessages: {
+                                value: llmConversationMessages, 
+                                timestamp: Date.now()
+                            } 
+                        }));
 
-                    goToNextFormPage();
-                
-                }} disabled={!userCanMoveToNextFormPage}>
-                    Done
-                </Button>
-            </CardFooter>
+                        goToNextFormPage();
+                    
+                    }} disabled={!userCanMoveToNextFormPage}>
+                        Done
+                    </Button>
+                </CardFooter>
 
-        </Card>
+            </Card>
+
+        </div>
 
     )
 

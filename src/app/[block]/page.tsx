@@ -5,21 +5,30 @@ import { PostDiscussionSurveyFormPage } from "@/components/home-form-pages/PostD
 import { PreDiscussionSurveyFormPage } from "@/components/home-form-pages/PreDiscussionSurveyPage";
 import { ChoseToHitFormPage } from "@/components/home-form-pages/ChoseToHitFormPage"
 import { UserLLMConversationSummaryFormPage } from "@/components/home-form-pages/UserLLMConversationSummaryFormPage";
-import { UserFormData } from "@/lib/utils";
+import { Block, getRandomArrayItem, UserFormData } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react"
+import { notFound, useParams } from 'next/navigation';
+
 
 export default function Home() {
+
+  const params = useParams();
+
+  if (!(["1", "2", "3"].includes(params.block as Block))) {
+    notFound();
+  }
 
   const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
 
   const [userFormData, setUserFormData] = useState<UserFormData>({
-    bias: (["neutral", "utilitarian", "deontological"] as const)[Math.floor(Math.random() * 3)],
+    bias: getRandomArrayItem(["neutral", "utilitarian", "deontological"]),
+    block: params.block as Block,
     choseToHit: null, 
     preDiscussionConfidence: null, 
-    conversationWithLLM: null, 
-    conversationWithLLMSummary: null, 
+    llmConversationMessages: null, 
+    userLLMConversationSummary: null, 
     postDiscussionConfidence: null
   });
 
@@ -31,7 +40,7 @@ export default function Home() {
   const formPages = [
     <ChoseToHitFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="situationPicker"/>, 
     <PreDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="preDiscussionSurvey"/>,
-    <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias} key="llmConversation"/>, 
+    <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias} block={userFormData.block} key="llmConversation"/>, 
     <UserLLMConversationSummaryFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="summary"/>, 
     <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postDiscussionSurvey"/>
   ]

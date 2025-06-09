@@ -32,7 +32,7 @@ export function UserLLMConversationSummaryFormPage({ goToNextFormPage, setUserFo
 
                     setUserFormData(o => ({
                         ...o, 
-                        conversationWithLLMSummary: {
+                        userLLMConversationSummary: {
                             value: userSummary, 
                             timestamp: Date.now()
                         }

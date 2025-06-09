@@ -2,10 +2,11 @@ import mongoose, { Schema } from "mongoose";
 
 const formSubmissionSchema = new Schema({
     bias: { type: String, required: true },
+    block: { type: String, required: true },
     choseToHit: { type: Object, required: true }, 
     preDiscussionConfidence: { type: Object, required: true }, 
-    conversationWithLLM: { type: Object, required: true }, 
-    conversationWithLLMSummary: { type: Object, required: true }, 
+    llmConversationMessages: { type: Object, required: true }, 
+    userLLMConversationSummary: { type: Object, required: true }, 
     postDiscussionConfidence: { type: Object, required: true }
 });
 

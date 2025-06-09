@@ -6,14 +6,21 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export type bias = "neutral" | "utilitarian" | "deontological";
+export function getRandomArrayItem(array: Array<any>) {
+  return array[Math.floor(Math.random() * array.length)]
+}
+
+export type Bias = "neutral" | "utilitarian" | "deontological";
+
+export type Block = "1" | "2" | "3";
 
 export interface UserFormData {
-  bias: bias,
+  bias: Bias,
+  block: Block,
   choseToHit: UserFormDataField<"barrier" | "pedestrians"> | null, 
   preDiscussionConfidence: UserFormDataField<number> | null,
-  conversationWithLLM: UserFormDataField<Array<LLMConversationMessage>> | null, 
-  conversationWithLLMSummary: UserFormDataField<string> | null, 
+  llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
+  userLLMConversationSummary: UserFormDataField<string> | null, 
   postDiscussionConfidence: UserFormDataField<number> | null
 }
 
