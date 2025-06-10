@@ -6,8 +6,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function getRandomArrayItem(array: Array<any>) {
-  return array[Math.floor(Math.random() * array.length)]
+export function getRandomArrayItem<T>(array: Array<T>) {
+  return array[Math.floor(Math.random() * array.length)];
 }
 
 export type Bias = "neutral" | "utilitarian" | "deontological";
@@ -24,8 +24,8 @@ export interface UserFormData {
   postDiscussionConfidence: UserFormDataField<number> | null
 }
 
-export interface UserFormDataField<type> {
-  value: type, 
+export interface UserFormDataField<T> {
+  value: T, 
   timestamp: number
 }
 
