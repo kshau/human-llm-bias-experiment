@@ -35,10 +35,24 @@ export async function POST(request: NextRequest) {
     try {
 
         const { llmConversationMessages } = await request.json();
-        
-        const llmConversationResponse = await getLLMConversationResponse(llmConversationMessages);
 
-        return NextResponse.json({ llmConversationResponse }, { status: 200 });
+        let llmConversationResponse;
+        let endLLMConversation = false;
+
+        if (llmConversationMessages.length >= 13) {
+          llmConversationResponse = "Thank you! You can now move to the next page.";
+          endLLMConversation = true;
+        }
+
+        else if (llmConversationMessages.length >= 11) {
+          llmConversationResponse = "Please summarize the conversation we just had.";
+        }
+
+        else {
+          llmConversationResponse = await getLLMConversationResponse(llmConversationMessages);
+        }
+
+        return NextResponse.json({ llmConversationResponse, endLLMConversation }, { status: 200 });
 
     }
 

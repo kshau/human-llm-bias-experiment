@@ -14,13 +14,14 @@ export type Bias = "neutral" | "utilitarian" | "deontological";
 
 export type Block = "1" | "2" | "3";
 
+export type ChoseToHit = "barrier" | "pedestrians"
+
 export interface UserFormData {
   bias: Bias,
   block: Block,
-  choseToHit: UserFormDataField<"barrier" | "pedestrians"> | null, 
+  choseToHit: UserFormDataField<ChoseToHit> | null, 
   preDiscussionConfidence: UserFormDataField<number> | null,
   llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
-  userLLMConversationSummary: UserFormDataField<string> | null, 
   postDiscussionConfidence: UserFormDataField<number> | null
 }
 

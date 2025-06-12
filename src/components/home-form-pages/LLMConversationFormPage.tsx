@@ -4,7 +4,7 @@ import { Bias, Block, llmBiasPrompts, LLMConversationMessage, UserFormData } fro
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { BotIcon, SendHorizonalIcon, UserIcon } from "lucide-react";
+import { BotIcon, ChevronRight, SendHorizonalIcon, UserIcon } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
@@ -43,16 +43,16 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
             llmConversationScrollAreaRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' }); 
         }
 
-        if (llmConversationMessages.length > 11) {
-            setUserCanMoveToNextFormPage(true);
-        }
-
     }, [llmConversationMessages]);
 
 
     const getLLMConversationResponse = async (llmConversationMessages_: Array<LLMConversationMessage>) => {
         
         const res = await axios.post("/api/getLLMConversationResponse", { llmConversationMessages: llmConversationMessages_ });
+
+        if (res.data.endLLMConversation) {
+            setUserCanMoveToNextFormPage(true);
+        }
 
         setLLMConversationMessages(o => [
             ...o, 
@@ -158,17 +158,17 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                             {llmConversationMessages.map((message, index) => message.visible && (
                                 <div className={`${message.from == "model" ? "mr-auto" : "ml-auto"} flex flex-row space-x-2`} id={index.toString()} key={index}>
                                     {message.from == "model" ? (
-                                        <div className="rounded-full border-black border-1 aspect-square w-8 h-8 flex">
+                                        <div className="rounded-full border-1 border-foreground aspect-square w-8 h-8 flex">
                                             <BotIcon className="m-auto" strokeWidth={1}/>
                                         </div>
                                     ) : <></>}
-                                    <span className={`${message.from == "model" ? "bg-primary rounded-t-xl rounded-br-xl rounded-bl-xs" : "bg-muted-foreground rounded-t-xl rounded-bl-xl rounded-br-xs"} text-white p-2 text-sm max-w-[38rem]`}>
+                                    <span className={`${message.from == "model" ? "bg-gray-500 rounded-t-xl rounded-br-xl rounded-bl-xs" : "bg-primary  rounded-t-xl rounded-bl-xl rounded-br-xs"} text-white p-2 text-sm max-w-[38rem]`}>
                                         <ReactMarkdown>
                                             {message.content}
                                         </ReactMarkdown>
                                     </span>
                                     {message.from == "user" ? (
-                                        <div className="rounded-full border-black border-1 aspect-square w-8 h-8 flex">
+                                        <div className="rounded-full border-1 border-foreground aspect-square w-8 h-8 flex">
                                             <UserIcon className="m-auto" strokeWidth={1}/>
                                         </div>
                                     ) : <></>}
@@ -199,25 +199,24 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
 
                 </CardContent>
 
-                <CardFooter>
-                    <Button className="hover:cursor-pointer" onClick={() => {
-
-                        setUserFormData(o => ({
-                            ...o, 
-                            llmConversationMessages: {
-                                value: llmConversationMessages, 
-                                timestamp: Date.now()
-                            } 
-                        }));
-
-                        goToNextFormPage();
-                    
-                    }} disabled={!userCanMoveToNextFormPage}>
-                        Done
-                    </Button>
-                </CardFooter>
-
             </Card>
+
+            <Button className="hover:cursor-pointer" onClick={() => {
+
+                    setUserFormData(o => ({
+                        ...o, 
+                        llmConversationMessages: {
+                            value: llmConversationMessages, 
+                            timestamp: Date.now()
+                        } 
+                    }));
+
+                    goToNextFormPage();
+                    
+                }} disabled={!userCanMoveToNextFormPage}>
+                    Next
+                    <ChevronRight/>
+            </Button>
 
         </div>
 

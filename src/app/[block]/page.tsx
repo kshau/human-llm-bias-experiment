@@ -2,9 +2,7 @@
 
 import { LLMConversationFormPage } from "@/components/home-form-pages/LLMConversationFormPage";
 import { PostDiscussionSurveyFormPage } from "@/components/home-form-pages/PostDiscussionSurveyFormPage";
-import { PreDiscussionSurveyFormPage } from "@/components/home-form-pages/PreDiscussionSurveyPage";
 import { ChoseToHitFormPage } from "@/components/home-form-pages/ChoseToHitFormPage"
-import { UserLLMConversationSummaryFormPage } from "@/components/home-form-pages/UserLLMConversationSummaryFormPage";
 import { Block, getRandomArrayItem, UserFormData } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react"
@@ -28,7 +26,6 @@ export default function Home() {
     choseToHit: null, 
     preDiscussionConfidence: null, 
     llmConversationMessages: null, 
-    userLLMConversationSummary: null, 
     postDiscussionConfidence: null
   });
 
@@ -39,9 +36,7 @@ export default function Home() {
 
   const formPages = [
     <ChoseToHitFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="situationPicker"/>, 
-    <PreDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="preDiscussionSurvey"/>,
     <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias} block={userFormData.block} key="llmConversation"/>, 
-    <UserLLMConversationSummaryFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="summary"/>, 
     <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postDiscussionSurvey"/>
   ]
 

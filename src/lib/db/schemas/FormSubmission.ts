@@ -6,7 +6,6 @@ const formSubmissionSchema = new Schema({
     choseToHit: { type: Object, required: true }, 
     preDiscussionConfidence: { type: Object, required: true }, 
     llmConversationMessages: { type: Object, required: true }, 
-    userLLMConversationSummary: { type: Object, required: true }, 
     postDiscussionConfidence: { type: Object, required: true }
 });
 
