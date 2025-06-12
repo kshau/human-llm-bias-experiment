@@ -1,6 +1,6 @@
 "use client"
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dispatch, SetStateAction } from "react";
 import { Slider } from "./ui/slider";
 

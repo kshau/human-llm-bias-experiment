@@ -1,7 +1,7 @@
 "use client"
 
 import { Bias, Block, llmBiasPrompts, LLMConversationMessage, UserFormData } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { BotIcon, ChevronRight, SendHorizonalIcon, UserIcon } from "lucide-react";
