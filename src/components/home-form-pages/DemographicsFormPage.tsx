@@ -11,7 +11,7 @@ import { Input } from "../ui/input";
 import { CountryDropdown } from "../ui/country-dropdown";
 import { useEffect, useState } from "react";
 
-export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
+export function DemographicsFormPage({ goToNextFormPage } : HomeFormPageProps) {
 
   const genderChoices = [
     {

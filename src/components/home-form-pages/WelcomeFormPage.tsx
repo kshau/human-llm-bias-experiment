@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 
 import { HomeFormPageProps } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { ChevronRight } from "lucide-react"
 
 export function WelcomeFormPage({ goToNextFormPage } : HomeFormPageProps) {
