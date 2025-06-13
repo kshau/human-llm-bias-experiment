@@ -7,6 +7,8 @@ import { Block, getRandomArrayItem, UserFormData } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { notFound, useParams } from 'next/navigation';
+import { WelcomeFormPage } from "@/components/home-form-pages/WelcomeFormPage";
+import { DemographicsFormPage } from "@/components/home-form-pages/DemographicsFormPage";
 
 
 export default function Home() {
@@ -23,6 +25,7 @@ export default function Home() {
   const [userFormData, setUserFormData] = useState<UserFormData>({
     bias: getRandomArrayItem(["neutral", "utilitarian", "deontological"]),
     block: params.block as Block,
+    demographics: null,
     choseToHit: null, 
     preDiscussionConfidence: null, 
     llmConversationMessages: null, 
@@ -35,7 +38,9 @@ export default function Home() {
   }
 
   const formPages = [
-    <ChoseToHitFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="situationPicker"/>, 
+    <WelcomeFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="welcome"/>,
+    <DemographicsFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="demographics"/>,
+    <ChoseToHitFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="choseToHit"/>, 
     <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias} block={userFormData.block} key="llmConversation"/>, 
     <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postDiscussionSurvey"/>
   ]
@@ -52,7 +57,7 @@ export default function Home() {
 
   return (
 
-    <div className="mt-16 flex justify-center">
+    <div className="my-16 flex justify-center">
       {formPages[currentFormPageIndex] || (
         <div className="flex flex-col text-center">
           <span className="font-bold text-6xl">

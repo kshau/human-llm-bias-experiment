@@ -16,9 +16,20 @@ export type Block = "1" | "2" | "3";
 
 export type ChoseToHit = "barrier" | "pedestrians"
 
+export interface Demographics {
+  age: number | null, 
+  gender: string | null,
+  races: Array<string> | null,
+  customRace: string | null,
+  highestEducationLevel: string | null, 
+  religion: string | null, 
+  country: string | null
+}
+
 export interface UserFormData {
   bias: Bias,
   block: Block,
+  demographics: UserFormDataField<Demographics> | null
   choseToHit: UserFormDataField<ChoseToHit> | null, 
   preDiscussionConfidence: UserFormDataField<number> | null,
   llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
