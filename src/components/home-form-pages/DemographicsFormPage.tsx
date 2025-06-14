@@ -11,7 +11,7 @@ import { Input } from "../ui/input";
 import { CountryDropdown } from "../ui/country-dropdown";
 import { useEffect, useState } from "react";
 
-export function DemographicsFormPage({ goToNextFormPage } : HomeFormPageProps) {
+export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
 
   const genderChoices = [
     {
@@ -87,24 +87,26 @@ export function DemographicsFormPage({ goToNextFormPage } : HomeFormPageProps) {
   ]
 
   const [invalidAge, setInvalidAge] = useState<boolean>(false);
+  const [userCanMoveToNextPage, setUserCanMoveToNextPage] = useState<boolean>(false);
 
   const [demographics, setDemographics] = useState<Demographics>({
     age: null, 
-    gender: null,
+    gender: "",
     races: [],
     customRace: null,
-    highestEducationLevel: null, 
-    religion: null, 
-    country: null
+    highestEducationLevel: "", 
+    religion: "", 
+    country: ""
   })
+
+  const notRequiredFieldKeys = ["customRace", "religion"];
 
   useEffect(() => {
 
-    if (demographics.age != null && (demographics.age < 18 || demographics.age > 65)) {
-        setInvalidAge(true);
-    } else {
-        setInvalidAge(false);
-    }
+    const newInvalidAge = demographics.age != null && (demographics.age < 18 || demographics.age > 65);
+    setInvalidAge(newInvalidAge);
+
+    setUserCanMoveToNextPage(!Object.entries(demographics).some(([key, value]) => !notRequiredFieldKeys.includes(key) && (!value || (Array.isArray(value) && value.length <= 0))) && !newInvalidAge);
 
   }, [demographics])
 
@@ -125,7 +127,7 @@ export function DemographicsFormPage({ goToNextFormPage } : HomeFormPageProps) {
           <CardContent>
                 <div className="space-y-8">
                     <div>
-                        <span className="font-semibold">Please enter your age.</span>
+                        <span className="font-semibold">Please enter your age.</span><DemographicsFormPageRedAsterisk/>
                         <Input className="mt-3 w-20 h-8 mb-1" type="number" min={18} max={65} step={1} value={demographics.age || ""} onChange={e => {
                             setDemographics(o => ({
                                 ...o, 
@@ -137,7 +139,7 @@ export function DemographicsFormPage({ goToNextFormPage } : HomeFormPageProps) {
                         ) : <></>}
                     </div>
                     <div>
-                        <span className="font-semibold">What's your gender?</span>
+                        <span className="font-semibold">What's your gender?</span><DemographicsFormPageRedAsterisk/>
                         <RadioGroup className="mt-3" value={demographics.gender} onValueChange={value => {
                             setDemographics(o => ({
                                 ...o, 
@@ -153,7 +155,7 @@ export function DemographicsFormPage({ goToNextFormPage } : HomeFormPageProps) {
                         </RadioGroup>
                     </div>
                     <div>
-                        <span className="font-semibold">Choose one or more races you consider yourself to be. {JSON.stringify(demographics)}</span>
+                        <span className="font-semibold">Choose one or more races you consider yourself to be.</span><DemographicsFormPageRedAsterisk/>
                         <div className="mt-4 space-y-3">
                             {raceChoices.map(choice => (
                                 <div className="flex items-center gap-3" key={choice.value}>
@@ -186,7 +188,7 @@ export function DemographicsFormPage({ goToNextFormPage } : HomeFormPageProps) {
                         </div>
                     </div>
                     <div>
-                        <span className="font-semibold">What's your highest education level?</span>
+                        <span className="font-semibold">What's your highest education level?</span><DemographicsFormPageRedAsterisk/>
                         <RadioGroup className="mt-3" onValueChange={value => {
                                 setDemographics(o => ({
                                     ...o, 
@@ -227,7 +229,18 @@ export function DemographicsFormPage({ goToNextFormPage } : HomeFormPageProps) {
 
       </Card>
 
-      <Button className="hover:cursor-pointer" onClick={() => {goToNextFormPage()}}>
+      <Button className="hover:cursor-pointer" onClick={() => {
+
+        setUserFormData(o => ({
+            ...o,
+            demographics: {
+                value: demographics, 
+                timestamp: Date.now()
+            }
+        }))
+
+        goToNextFormPage()
+    }} disabled={!userCanMoveToNextPage}>
         Next
         <ChevronRight/>
       </Button>
@@ -236,4 +249,8 @@ export function DemographicsFormPage({ goToNextFormPage } : HomeFormPageProps) {
 
   )
 
+}
+
+function DemographicsFormPageRedAsterisk() {
+    return <span className="text-destructive"> *</span>
 }

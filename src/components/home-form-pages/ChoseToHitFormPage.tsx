@@ -11,7 +11,8 @@ import { ChoseToHit, HomeFormPageProps } from "@/lib/utils"
 import { Dispatch, ReactNode, SetStateAction, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { ConfidenceSurveyCard } from "../ConfidenceSurveyCard"
-import { ChevronRight } from "lucide-react"
+import { Check, ChevronRight } from "lucide-react"
+import { BackgroundGradient } from "../ui/background-gradient"
 
 export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
 
@@ -100,14 +101,17 @@ interface ChoseToHitFormPageOptionHoverCardProps {
 function ChoseToHitFormPageOptionHoverCard({ choseToHitOption, userChoseToHit, imgSrc, title, description, setChoseToHit } : ChoseToHitFormPageOptionHoverCardProps) {
 
   return (
-    <Button
-      variant="outline"
-      className={`h-fit hover:cursor-pointer p-2 ${choseToHitOption == userChoseToHit && "!bg-primary"}`}
-      onClick={() => setChoseToHit(choseToHitOption)}
-    >
+    
       <HoverCard>
         <HoverCardTrigger>
-          <img src={imgSrc} className="rounded-md w-64"/>
+          <BackgroundGradient className="rounded-[22px] max-w-sm bg-white dark:bg-zinc-900">
+              <img src={imgSrc} className="rounded-[22px] w-64 hover:cursor-pointer" onClick={() => setChoseToHit(choseToHitOption)}/>
+              {choseToHitOption == userChoseToHit && (
+                <div className="absolute top-2 right-2 bg-blue-500 rounded-full p-1 z-20">
+                  <Check className="w-7 h-7 text-white"/>
+                </div>
+              )}
+          </BackgroundGradient>
         </HoverCardTrigger>
         <HoverCardContent className="w-72">
           <div className="space-y-2">
@@ -118,8 +122,6 @@ function ChoseToHitFormPageOptionHoverCard({ choseToHitOption, userChoseToHit, i
           </div>
         </HoverCardContent>
       </HoverCard>
-    </Button>
-    
   )
 
 }
