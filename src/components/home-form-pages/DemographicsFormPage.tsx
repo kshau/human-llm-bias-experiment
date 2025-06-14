@@ -139,7 +139,7 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
                         ) : <></>}
                     </div>
                     <div>
-                        <span className="font-semibold">What's your gender?</span><DemographicsFormPageRedAsterisk/>
+                        <span className="font-semibold">What&apos;s your gender?</span><DemographicsFormPageRedAsterisk/>
                         <RadioGroup className="mt-3" value={demographics.gender} onValueChange={value => {
                             setDemographics(o => ({
                                 ...o, 
@@ -188,7 +188,7 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
                         </div>
                     </div>
                     <div>
-                        <span className="font-semibold">What's your highest education level?</span><DemographicsFormPageRedAsterisk/>
+                        <span className="font-semibold">What&apos;s your highest education level?</span><DemographicsFormPageRedAsterisk/>
                         <RadioGroup className="mt-3" onValueChange={value => {
                                 setDemographics(o => ({
                                     ...o, 
