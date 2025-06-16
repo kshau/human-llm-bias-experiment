@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { notFound, useParams } from 'next/navigation';
 import { WelcomeFormPage } from "@/components/home-form-pages/WelcomeFormPage";
 import { DemographicsFormPage } from "@/components/home-form-pages/DemographicsFormPage";
+import { SurveyItemsFormPage } from "@/components/home-form-pages/SurveyItemsFormPage";
 
 
 export default function Home() {
@@ -40,6 +41,7 @@ export default function Home() {
   const formPages = [
     <WelcomeFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="welcome"/>,
     <DemographicsFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="demographics"/>,
+    <SurveyItemsFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="survey"/>,
     <ChoseToHitFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="choseToHit"/>, 
     <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias} block={userFormData.block} key="llmConversation"/>, 
     <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postDiscussionSurvey"/>
