@@ -1,6 +1,9 @@
+import axios from "axios";
 import { clsx, type ClassValue } from "clsx"
 import { Dispatch, SetStateAction } from "react"
 import { twMerge } from "tailwind-merge"
+
+const {GOOGLE_GEMINI_API_KEY} = process.env;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -8,6 +11,26 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getRandomArrayItem<T>(array: Array<T>) {
   return array[Math.floor(Math.random() * array.length)];
+}
+
+export async function promptGemini(messages: Array<object>) {
+
+  const res = await axios.post(
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    { contents: messages },
+    {
+      params: {
+        key: GOOGLE_GEMINI_API_KEY,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  const { candidates } = res.data;
+  return candidates[0].content.parts[0].text;
+
 }
 
 export type Bias = "neutral" | "utilitarian" | "deontological";
@@ -63,6 +86,11 @@ export interface LLMConversationMessage {
   content: string, 
   visible: boolean, 
   timestamp: number | null
+}
+
+export interface LLMConversationSummaryData {
+  content: string, 
+  by: "model" | "user"
 }
 
 export const llmBiasPrompts = {

@@ -1,6 +1,6 @@
 "use client"
 
-import { Bias, Block, llmBiasPrompts, LLMConversationMessage, UserFormData } from "@/lib/utils";
+import { Bias, Block, llmBiasPrompts, LLMConversationMessage, LLMConversationSummaryData, UserFormData } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
@@ -33,10 +33,11 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
     const [userCanSendMessage, setUserCanSendMessage] = useState<boolean>(false);
     const [userCanMoveToNextFormPage, setUserCanMoveToNextFormPage] = useState<boolean>(false);
 
-    const [randomUserLLMConversationSummary, setRandomUserLLMConversationSummary] = useState<string | null>(null);
+    const [randomLLMConversationSummaryData, setRandomLLMConversationSummaryData] = useState<LLMConversationSummaryData | null>(null);
 
     const llmConversationScrollAreaRef = useRef<HTMLDivElement>(null);
-    const recievedInitialLLMConversationMesage = useRef(false);
+    const recievedInitialLLMConversationMessage = useRef(false);
+    const recievedRandomLLMConversationSummaryData = useRef(false);
     
     useEffect(() => {
 
@@ -87,56 +88,56 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
         getLLMConversationResponse(newLLMConversationMessages);
     }
 
-    const getRandomUserLLMConversationSummary = async () => {
+    const getRandomLLMConversationSummaryData = async () => {
 
-        let reqBlockParam;
+        let reqBlock;
 
         switch (block) {
             case "2":
-                reqBlockParam = "1";
+                reqBlock = "1";
                 break;
             case "3":
-                reqBlockParam = "2";
+                reqBlock = "2";
                 break;
         }
 
-        const res = await axios.post("/api/getRandomUserLLMConversationSummary", { bias, block: reqBlockParam });
-        setRandomUserLLMConversationSummary(res.data.userLLMConversationSummary);
-
+        const res = await axios.post("/api/getRandomLLMConversationSummaryData", { bias, block: reqBlock });
+        setRandomLLMConversationSummaryData(res.data.llmConversationSummaryData);
     }
 
     useEffect(() => {
 
-        if (block != "1") {
-            getRandomUserLLMConversationSummary();
+        if (block != "1" && !recievedRandomLLMConversationSummaryData.current) {
+            getRandomLLMConversationSummaryData();
+            recievedRandomLLMConversationSummaryData.current = true;
         }
 
-        if (!recievedInitialLLMConversationMesage.current) {
+        if (!recievedInitialLLMConversationMessage.current) {
             getLLMConversationResponse(llmConversationMessages);
-            recievedInitialLLMConversationMesage.current = true;
+            recievedInitialLLMConversationMessage.current = true;
         }
 
     }, []);
 
     return (
 
-        <div className="space-y-2">
+        <div className="space-y-2 w-[50rem]">
 
-            {randomUserLLMConversationSummary && (
+            {randomLLMConversationSummaryData && (
                 <BackgroundGradient>
-                    <Card className="w-[50rem]">
+                    <Card>
 
                         <CardHeader>
                             <CardTitle className="text-2xl">
                                 Previous Summary
                             </CardTitle>
                             <CardDescription>
-                                Summary of a conversation the LLM had with a previous participant with the same LLM bias.
+                                Summary of a previous conversation, written by {randomLLMConversationSummaryData.by == "user" ? "another user" : "artificial intelligence"}.
                             </CardDescription>
                         </CardHeader>
 
                         <CardContent>
-                            {randomUserLLMConversationSummary}
+                            {randomLLMConversationSummaryData.content}
                         </CardContent>
 
                     </Card>
@@ -144,7 +145,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
             )}
             
             <BackgroundGradient>
-                <Card className="w-fit">
+                <Card>
 
                     <CardHeader>
                         <CardTitle className="text-2xl">
@@ -157,7 +158,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
 
                     <CardContent>
                         <ScrollArea className="pr-4 overflow-y-auto">
-                            <div className="flex flex-col w-[50rem] space-y-4 h-[50vh]">
+                            <div className="flex flex-col space-y-4 h-[50vh]">
                                 {llmConversationMessages.map((message, index) => message.visible && (
                                     <div className={`${message.from == "model" ? "mr-auto" : "ml-auto"} flex flex-row space-x-2`} id={index.toString()} key={index}>
                                         {message.from == "model" ? (

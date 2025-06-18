@@ -8,7 +8,8 @@ const formSubmissionSchema = new Schema({
     choseToHit: { type: Object, required: true }, 
     preDiscussionConfidence: { type: Object, required: true }, 
     llmConversationMessages: { type: Object, required: true }, 
-    postDiscussionConfidence: { type: Object, required: true }
+    postDiscussionConfidence: { type: Object, required: true }, 
+    llmConversationSummarizedBy: { type: Array<string>, default: [] }
 });
 
 const FormSubmission = mongoose.models.formSubmission || mongoose.model('formSubmission', formSubmissionSchema);

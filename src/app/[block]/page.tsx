@@ -20,7 +20,7 @@ export default function Home() {
     notFound();
   }
 
-  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
+  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(4);
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
 
   const [userFormData, setUserFormData] = useState<UserFormData>({
@@ -56,6 +56,10 @@ export default function Home() {
       submitUserFormData();
     }
   }, [shouldSubmitForm]);
+
+  useEffect(() => {
+    console.log(userFormData.bias);
+  }, [])
 
   return (
 
