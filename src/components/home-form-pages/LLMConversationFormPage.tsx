@@ -90,18 +90,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
 
     const getRandomLLMConversationSummaryData = async () => {
 
-        let reqBlock;
-
-        switch (block) {
-            case "2":
-                reqBlock = "1";
-                break;
-            case "3":
-                reqBlock = "2";
-                break;
-        }
-
-        const res = await axios.post("/api/getRandomLLMConversationSummaryData", { bias, block: reqBlock });
+        const res = await axios.post("/api/getRandomLLMConversationSummaryData", { bias, block });
         setRandomLLMConversationSummaryData(res.data.llmConversationSummaryData);
     }
 
@@ -132,7 +121,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                                 Previous Summary
                             </CardTitle>
                             <CardDescription>
-                                Summary of a previous conversation, written by {randomLLMConversationSummaryData.by == "user" ? "another user" : "artificial intelligence"}.
+                                Summary of a previous conversation, written by <span className="font-semibold text-primary">{randomLLMConversationSummaryData.by == "user" ? "another user" : "artificial intelligence"}.</span> 
                             </CardDescription>
                         </CardHeader>
 

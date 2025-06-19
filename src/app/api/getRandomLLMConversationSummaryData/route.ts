@@ -8,16 +8,48 @@ export async function POST(request: NextRequest) {
     try {
 
         const { bias, block } = await request.json();
-        
-        const formSubmissionCandidateDocs = await FormSubmission.find({ bias, block, llmConversationSummarizedBy: { $size: 0 } });
 
-        if (formSubmissionCandidateDocs.length <= 0) {
+        let formSubmissionCandidateDocs;
+
+        let summarizeLLMConversationBy;
+        let selectedFormSubmissionDoc;
+
+        switch (block) {
+
+            case "2":
+
+                formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: "1", llmConversationSummarizedBy: { $size: 0 } });
+
+                if (formSubmissionCandidateDocs.length <= 0) {
+                    break;
+                }
+
+                selectedFormSubmissionDoc = getRandomArrayItem(formSubmissionCandidateDocs);
+                summarizeLLMConversationBy = getRandomArrayItem(["user", "model"]);
+
+                break;
+
+
+            case "3":
+
+                formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: "1", llmConversationSummarizedBy: { $size: 1 } });
+
+                if (formSubmissionCandidateDocs.length <= 0) {
+                    break;
+                }
+
+                selectedFormSubmissionDoc = getRandomArrayItem(formSubmissionCandidateDocs);
+                summarizeLLMConversationBy = selectedFormSubmissionDoc.llmConversationSummarizedBy[0] == "user" ? "model" : "user";
+
+                break;
+
+        }
+
+
+        if (!formSubmissionCandidateDocs || formSubmissionCandidateDocs.length <= 0) {
             return NextResponse.json({ llmConversationSummaryData: null }, { status: 200 });
         }
 
-        const summarizeLLMConversationBy = getRandomArrayItem(["user", "model"]);
-
-        const selectedFormSubmissionDoc = getRandomArrayItem(formSubmissionCandidateDocs);
         selectedFormSubmissionDoc.llmConversationSummarizedBy.push(summarizeLLMConversationBy);
         await selectedFormSubmissionDoc.save();
 
