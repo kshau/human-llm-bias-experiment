@@ -9,7 +9,8 @@ import { useEffect, useState } from "react"
 import { notFound, useParams } from 'next/navigation';
 import { WelcomeFormPage } from "@/components/home-form-pages/WelcomeFormPage";
 import { DemographicsFormPage } from "@/components/home-form-pages/DemographicsFormPage";
-import { SurveyItemsFormPage } from "@/components/home-form-pages/SurveyItemsFormPage";
+import { PreDiscussionSurveyFormPage } from "@/components/home-form-pages/PreDiscussionSurveyFormPage";
+import { PostTaskMDMTFormPage } from "@/components/home-form-pages/PostTaskMDMTFormPage";
 
 
 export default function Home() {
@@ -20,13 +21,14 @@ export default function Home() {
     notFound();
   }
 
-  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(4);
+  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
 
   const [userFormData, setUserFormData] = useState<UserFormData>({
     bias: getRandomArrayItem(["neutral", "utilitarian", "deontological"]),
     block: params.block as Block,
     demographics: null,
+    surveyItems: null,
     choseToHit: null, 
     preDiscussionConfidence: null, 
     llmConversationMessages: null, 
@@ -41,10 +43,11 @@ export default function Home() {
   const formPages = [
     <WelcomeFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="welcome"/>,
     <DemographicsFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="demographics"/>,
-    <SurveyItemsFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="survey"/>,
+    <PreDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="survey"/>,
     <ChoseToHitFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="choseToHit"/>, 
     <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias} block={userFormData.block} key="llmConversation"/>, 
-    <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postDiscussionSurvey"/>
+    <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postDiscussionSurvey"/>, 
+    <PostTaskMDMTFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postTaskMDMT"/>
   ]
 
   const submitUserFormData = async () => {

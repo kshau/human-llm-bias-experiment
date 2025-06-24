@@ -121,7 +121,8 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                                 Previous Summary
                             </CardTitle>
                             <CardDescription>
-                                Summary of a previous conversation, written by <span className="font-semibold text-primary">{randomLLMConversationSummaryData.by == "user" ? "another user" : "artificial intelligence"}.</span> 
+                                Summary of a previous conversation, written by 
+                                <span className="font-semibold text-primary">{randomLLMConversationSummaryData.by == "user" ? "another user" : "artificial intelligence"}.</span> 
                             </CardDescription>
                         </CardHeader>
 

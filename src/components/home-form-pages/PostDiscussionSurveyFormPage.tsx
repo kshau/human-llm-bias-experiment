@@ -24,7 +24,7 @@ export function PostDiscussionSurveyFormPage({ goToNextFormPage, setUserFormData
                             timestamp: Date.now()
                         },
                     }))
-                    goToNextFormPage(true);
+                    goToNextFormPage();
                 }}
                 disabled={!postDiscussionConfidence}
             >

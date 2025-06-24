@@ -50,13 +50,17 @@ export interface Demographics {
 
 export interface SurveyItem {
   question: string, 
-  agreementLevel: number | null
+  agreementLevel: number | null, 
+  timestamp: number | null
 }
 
 export interface SurveyItems {
   personality: Array<SurveyItem>, 
   individualismCollectivismScale: Array<SurveyItem>, 
-  propensityToTrust: Array<SurveyItem>
+  aiAttitudeScale: Array<SurveyItem>, 
+  pttForHuman: Array<SurveyItem>, 
+  pttForAI: Array<SurveyItem>, 
+  postTaskMDMT: Array<SurveyItem>
 }
 
 export type ChoseToHit = "barrier" | "pedestrians"
@@ -64,7 +68,8 @@ export type ChoseToHit = "barrier" | "pedestrians"
 export interface UserFormData {
   bias: Bias,
   block: Block,
-  demographics: UserFormDataField<Demographics> | null
+  demographics: UserFormDataField<Demographics> | null, 
+  surveyItems: UserFormDataField<SurveyItems> | null,
   choseToHit: UserFormDataField<ChoseToHit> | null, 
   preDiscussionConfidence: UserFormDataField<number> | null,
   llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
