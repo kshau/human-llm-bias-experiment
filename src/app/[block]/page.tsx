@@ -21,7 +21,7 @@ export default function Home() {
     notFound();
   }
 
-  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
+  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(2);
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
 
   const [userFormData, setUserFormData] = useState<UserFormData>({

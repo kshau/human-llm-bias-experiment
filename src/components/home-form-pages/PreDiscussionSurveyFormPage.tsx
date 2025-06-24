@@ -143,7 +143,7 @@ export function PreDiscussionSurveyFormPage({ goToNextFormPage, setUserFormData 
                     <SurveyItemsTable surveyItems={surveyItems} setSurveyItems={setSurveyItems} surveyItemsCategory="individualismCollectivismScale"/>
                   </div>
                   <div>
-                    <SurveyItemsTable surveyItems={surveyItems} setSurveyItems={setSurveyItems} surveyItemsCategory="aiAttitudeScale" slider/>
+                    <SurveyItemsTable surveyItems={surveyItems} setSurveyItems={setSurveyItems} surveyItemsCategory="aiAttitudeScale" sliderOptions={{slider: true, maxValue: 10, minLabel: "Not at all", maxLabel: "Completely agree"}}/>
                   </div>
                   <div>
                     <SurveyItemsTable surveyItems={surveyItems} setSurveyItems={setSurveyItems} surveyItemsCategory="pttForHuman"/>

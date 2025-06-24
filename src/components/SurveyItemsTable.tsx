@@ -12,14 +12,21 @@ import {
 import { Slider } from "./ui/slider";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
+interface SurveyItemsTableSliderOptions {
+  slider?: boolean, 
+  maxValue?: number, 
+  minLabel?: string, 
+  maxLabel?: string
+}
+
 interface SurveyItemsTableProps {
   surveyItems: SurveyItems
   setSurveyItems: Dispatch<SetStateAction<SurveyItems>>, 
   surveyItemsCategory: keyof SurveyItems, 
-  slider?: boolean
+  sliderOptions?: SurveyItemsTableSliderOptions
 }
 
-export function SurveyItemsTable({ surveyItems, setSurveyItems, surveyItemsCategory, slider = false } : SurveyItemsTableProps) {
+export function SurveyItemsTable({ surveyItems, setSurveyItems, surveyItemsCategory, sliderOptions = { slider: false, maxValue: 10 }} : SurveyItemsTableProps) {
 
   const agreementLevelLabels = [
     "Strongly disagree", 
@@ -54,18 +61,18 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, surveyItemsCateg
             <TableHead/>
             <TableHead className="w-[48rem]">
               <div className="flex flex-row justify-between space-x-4 px-1">
-                {slider ? (
-                  [...Array(10)].map((_, index) => (
+                {sliderOptions.slider ? (
+                  [...Array(sliderOptions.maxValue)].map((_, index) => (
                     <span key={index}>{index + 1}</span>
                   ))
                 ) : agreementLevelLabels.map((label, index) => (
                   <span key={index}>{label}</span>
                 ))}
               </div>
-              {slider && (
+              {sliderOptions.slider && (
                 <div className="flex justify-between text-muted-foreground font-thin text-xs my-2">
-                  <span>Not at all</span>
-                  <span>Completely agree</span>
+                  <span>{sliderOptions.minLabel}</span>
+                  <span>{sliderOptions.maxLabel}</span>
                 </div>
               )}
             </TableHead>
@@ -80,8 +87,8 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, surveyItemsCateg
               </span>
             </TableCell>
             <TableCell>
-              {slider ? (
-                <Slider min={1} max={10} step={1} onValueChange={value => {setAgreementLevel(surveyItem.question, value[0])}} onClick={() => {if (!surveyItem.agreementLevel) {setAgreementLevel(surveyItem.question, 1)}}}/>
+              {sliderOptions.slider ? (
+                <Slider min={1} max={sliderOptions.maxValue} step={1} onValueChange={value => {setAgreementLevel(surveyItem.question, value[0])}} onClick={() => {if (!surveyItem.agreementLevel) {setAgreementLevel(surveyItem.question, 1)}}}/>
               ) : (
                 <RadioGroup className="flex flex-row justify-between px-10" onValueChange={value => {setAgreementLevel(surveyItem.question, parseInt(value))}}>
                   {[1, 2, 3, 4, 5].map((agreementLevel, index) => (

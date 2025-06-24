@@ -78,7 +78,7 @@ export function PostTaskMDMTFormPage({ goToNextFormPage, setUserFormData } : Hom
             <CardContent>
                 <div className="space-y-8">
                   <div>
-                    <SurveyItemsTable surveyItems={surveyItems} setSurveyItems={setSurveyItems} surveyItemsCategory="postTaskMDMT"/>
+                    <SurveyItemsTable surveyItems={surveyItems} setSurveyItems={setSurveyItems} surveyItemsCategory="postTaskMDMT" sliderOptions={{slider: true, maxValue: 7, minLabel: "Not at all", maxLabel: "Very much"}}/>
                   </div>
                 </div>
                 
