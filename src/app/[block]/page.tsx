@@ -1,16 +1,15 @@
 "use client"
 
 import { LLMConversationFormPage } from "@/components/home-form-pages/LLMConversationFormPage";
-import { PostDiscussionSurveyFormPage } from "@/components/home-form-pages/PostDiscussionSurveyFormPage";
+import { PostDiscussionConfidenceFormPage } from "@/components/home-form-pages/PostDiscussionConfidenceFormPage";
 import { ChoseToHitFormPage } from "@/components/home-form-pages/ChoseToHitFormPage"
-import { Block, getRandomArrayItem, UserFormData } from "@/lib/utils";
+import { Block, getRandomArrayItem, surveyItemQuestions, UserFormData } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { notFound, useParams } from 'next/navigation';
 import { WelcomeFormPage } from "@/components/home-form-pages/WelcomeFormPage";
 import { DemographicsFormPage } from "@/components/home-form-pages/DemographicsFormPage";
-import { PreDiscussionSurveyFormPage } from "@/components/home-form-pages/PreDiscussionSurveyFormPage";
-import { PostTaskMDMTFormPage } from "@/components/home-form-pages/PostTaskMDMTFormPage";
+import { SurveyItemsFormPage } from "@/components/SurveyItemsFormPage";
 
 
 export default function Home() {
@@ -21,48 +20,149 @@ export default function Home() {
     notFound();
   }
 
-  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(2);
-  const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
+  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
+  const [shouldSubmitUserFormData, setShouldSubmitUserFormData] = useState<boolean>(false);
 
   const [userFormData, setUserFormData] = useState<UserFormData>({
     bias: getRandomArrayItem(["neutral", "utilitarian", "deontological"]),
     block: params.block as Block,
     demographics: null,
-    surveyItems: null,
+    survey: {
+      value: {}, 
+      timestamp: null
+    },
     choseToHit: null, 
     preDiscussionConfidence: null, 
     llmConversationMessages: null, 
     postDiscussionConfidence: null
   });
 
-  const goToNextFormPage = (shouldSubmitFormParam?: boolean) => {
-    setShouldSubmitForm(shouldSubmitFormParam || false);
-    setCurrentFormPageIndex(o => o + 1);
-  }
+  const goToNextFormPage = () => {
 
-  const formPages = [
-    <WelcomeFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="welcome"/>,
-    <DemographicsFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="demographics"/>,
-    <PreDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="survey"/>,
-    <ChoseToHitFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="choseToHit"/>, 
-    <LLMConversationFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} bias={userFormData.bias} block={userFormData.block} key="llmConversation"/>, 
-    <PostDiscussionSurveyFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postDiscussionSurvey"/>, 
-    <PostTaskMDMTFormPage goToNextFormPage={goToNextFormPage} setUserFormData={setUserFormData} key="postTaskMDMT"/>
-  ]
+    if (currentFormPageIndex >= formPages.length - 1) {
+      setShouldSubmitUserFormData(true);
+    }
+
+    setCurrentFormPageIndex(o => o + 1);
+
+  }
 
   const submitUserFormData = async () => {
     await axios.post("/api/submitUserFormData", { userFormData });
   }
 
+  const formPages = [
+
+    <WelcomeFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      key="welcome"
+    />,
+
+    <DemographicsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      key="demographics"
+    />,
+
+    <SurveyItemsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      title="I see myself as someone who"
+      surveyItemQuestionCategory={{
+        name: "personality",
+        questions: surveyItemQuestions.personality,
+        questionsAgreementLevelValidationIndex: 4, 
+        questionsAgreementLevelValidationValue: 4
+      }}
+      key="personalityPreDicussionFormPage"
+    />,
+
+    <SurveyItemsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      surveyItemQuestionCategory={{
+        name: "individualismCollectivismScale",
+        questions: surveyItemQuestions.individualismCollectivismScale,
+      }}
+      key="individualismCollectivismScalePreDicussionFormPage"
+    />,
+
+    <SurveyItemsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      numberedAgreementLevelLabels={10}
+      surveyItemQuestionCategory={{
+        name: "aiAttitudeScale",
+        questions: surveyItemQuestions.aiAttitudeScale,
+      }}
+      key="aiAttitudeScalePreDicussionFormPage"
+    />,
+
+    <SurveyItemsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      surveyItemQuestionCategory={{
+        name: "pttForHuman",
+        questions: surveyItemQuestions.pttForHuman,
+      }}
+      key="pttForHumanPreDicussionFormPage"
+    />,
+
+    <SurveyItemsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      numberedAgreementLevelLabels={7}
+      surveyItemQuestionCategory={{
+        name: "pttForAI",
+        questions: surveyItemQuestions.pttForAI,
+      }}
+      key="pttForAIPreDicussionFormPage"
+    />,
+
+    <ChoseToHitFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      key="choseToHit"
+    />,
+    <LLMConversationFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      bias={userFormData.bias}
+      block={userFormData.block}
+      key="llmConversation"
+    />,
+    <PostDiscussionConfidenceFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      key="postDiscussionSurvey"
+    />,
+
+    <SurveyItemsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      numberedAgreementLevelLabels={7}
+      surveyItemQuestionCategory={{
+        name: "postTaskMDMT",
+        questions: surveyItemQuestions.postTaskMDMT,
+      }}
+      key="postTaskMDMTFormPage"
+    />,
+  ];
+
   useEffect(() => {
-    if (shouldSubmitForm) {
+    if (shouldSubmitUserFormData) {
       submitUserFormData();
     }
-  }, [shouldSubmitForm]);
+  }, [shouldSubmitUserFormData, userFormData]);
 
   useEffect(() => {
     console.log(userFormData.bias);
   }, [])
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentFormPageIndex]);
 
   return (
 

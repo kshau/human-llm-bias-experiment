@@ -16,16 +16,16 @@ export function WelcomeFormPage({ goToNextFormPage } : HomeFormPageProps) {
         <Card className="w-[40rem]">
 
             <CardHeader>
-                <CardTitle className="text-2xl">
-                    Welcome!
-                </CardTitle>
+              <CardTitle className="text-2xl">
+                Welcome!
+              </CardTitle>
             </CardHeader>
             <CardContent>
-                  Thank you for participating in our research examining how people discuss and evaluate
-                  decisions involving autonomous vehicles with conversational agents. <br/><br/>
-                  You will be asked to read a scenario, engage in a short discussion with a conversational partner,
-                  and complete some brief surveys about your views and confidence. <br/><br/>
-                  The total study is around 20 minutes.
+              Thank you for participating in our research examining how people discuss and evaluate
+              decisions involving autonomous vehicles with conversational agents. <br/><br/>
+              You will be asked to read a scenario, engage in a short discussion with a conversational partner,
+              and complete some brief surveys about your views and confidence. <br/><br/>
+              The total study is around 20 minutes.
             </CardContent>
 
         </Card>

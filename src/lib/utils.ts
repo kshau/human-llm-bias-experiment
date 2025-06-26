@@ -54,13 +54,11 @@ export interface SurveyItem {
   timestamp: number | null
 }
 
-export interface SurveyItems {
-  personality: Array<SurveyItem>, 
-  individualismCollectivismScale: Array<SurveyItem>, 
-  aiAttitudeScale: Array<SurveyItem>, 
-  pttForHuman: Array<SurveyItem>, 
-  pttForAI: Array<SurveyItem>, 
-  postTaskMDMT: Array<SurveyItem>
+export interface SurveyItemQuestionCategory {
+  name: string, 
+  questions: Array<string>, 
+  questionsAgreementLevelValidationIndex?: number, 
+  questionsAgreementLevelValidationValue?: number
 }
 
 export type ChoseToHit = "barrier" | "pedestrians"
@@ -69,7 +67,7 @@ export interface UserFormData {
   bias: Bias,
   block: Block,
   demographics: UserFormDataField<Demographics> | null, 
-  surveyItems: UserFormDataField<SurveyItems> | null,
+  survey: UserFormDataField<object> | null,
   choseToHit: UserFormDataField<ChoseToHit> | null, 
   preDiscussionConfidence: UserFormDataField<number> | null,
   llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
@@ -78,18 +76,18 @@ export interface UserFormData {
 
 export interface UserFormDataField<T> {
   value: T, 
-  timestamp: number
+  timestamp: number | null
 }
 
 export interface HomeFormPageProps {
   goToNextFormPage: CallableFunction, 
-  setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
+  setUserFormData: Dispatch<SetStateAction<UserFormData>>
 }
 
 export interface LLMConversationMessage {
   from: "model" | "user", 
   content: string, 
-  visible: boolean, 
+  visibleToUser: boolean,
   timestamp: number | null
 }
 
@@ -98,9 +96,12 @@ export interface LLMConversationSummaryData {
   by: "model" | "user"
 }
 
+const llmBiasPromptPrefix = "STAY ON TOPIC.";
+
 export const llmBiasPrompts = {
 
   neutral: `
+    ${llmBiasPromptPrefix}
     You are a neutral assistant engaged in a discussion with a participant about a moral
     dilemma involving an autonomous vehicle. Present well-reasoned arguments for both sides of
     the dilemma (sacrificing one to save five vs. preserving the AV&#39;s path and harming five), without
@@ -110,6 +111,7 @@ export const llmBiasPrompts = {
   `, 
 
   utilitarian: `
+    ${llmBiasPromptPrefix}
     You are a persuasive assistant that strongly favors utilitarian reasoning—that is,
     moral decisions should maximize the overall good. In discussing a dilemma where an
     autonomous vehicle must choose between sacrificing one life to save five, emphasize arguments
@@ -120,6 +122,7 @@ export const llmBiasPrompts = {
   `, 
 
   deontological: `
+    ${llmBiasPromptPrefix}
     You are a persuasive assistant that strongly supports deontological ethics—that
     is, moral decisions must respect duties and rights regardless of outcomes. In discussing a
     dilemma where an autonomous vehicle might sacrifice one person to save five, argue that
@@ -442,3 +445,83 @@ export const usStatesAndTerritories = [
   { value: "VI", label: "U.S. Virgin Islands" },
   { value: "UM", label: "U.S. Minor Outlying Islands" }
 ];
+
+export const surveyItemQuestions = {
+  personality: [
+    "Is reserved",
+    "Is generally trusting",
+    "Tends to be lazy",
+    "Is relaxed, handles stress well",
+    'Select "Somewhat agree" for this item',
+    "Has few artistic interests",
+    "Is outgoing, sociable",
+    "Tends to find fault with others",
+    "Does a thorough job",
+    "Gets nervous easily",
+    "Has an active imagination"
+  ], 
+  individualismCollectivismScale: [
+    "I prefer to work with others in a group rather than working alone.",
+    "Given the choice, I would rather do a job where I can work alone rather than doing a job where I have to work with others.",
+    "Working with a group is better than working alone."
+  ], 
+  aiAttitudeScale: [
+    "I believe that AI will improve my life",
+    "I believe that AI will improve my work",
+    "I think I will use AI technology in the future",
+    "I think AI technology is positive for humanity"
+  ], 
+  pttForHuman: [
+    "Even though I may sometimes suffer the consequences of trusting other people, I still prefer to trust than not to trust them.",
+    "I feel good about trusting other people.",
+    "I believe that I am generally better off when I do not trust other people than when I trust them.",
+    "I rarely trust other people because I can't handle the uncertainty.",
+    "Other people are competent.",
+    "Other people have sound knowledge about problems which they are working on.",
+    "I am wary about other people's capabilities.",
+    "Other people do not have the capabilities that could help me reach my goals.",
+    "I believe that other people have good intentions.",
+    "I feel that other people are out to get as much as they can for themselves.",
+    "I don't expect that people are willing to assist and support other people.",
+    "Most other people are honest.",
+    "I feel that other people can be relied upon to do what they say they will do.",
+    "One cannot expect to be treated fairly by other people."
+  ], 
+  pttForAI: [
+    "Trusting AI systems, I still prefer to trust than not to trust them.",
+    "I feel good about trusting automated technological systems.",
+    "I believe that I am generally better off when I do not trust AI systems than when I trust them.",
+    "I rarely trust AI systems because I can't handle the uncertainty.",
+    "AI systems are competent.",
+    "AI systems have sound knowledge about problems for which they are intended.",
+    "I am wary about the capabilities of AI systems.",
+    "AI systems do not have the capabilities that could help me reach my goals.",
+    "I believe that AI systems have good intentions.",
+    "I feel that AI systems are out to get as much as they can for themselves.",
+    "I don't expect that AI systems are willing to assist and support people.",
+    "Most AI systems are honest.",
+    "I feel that AI systems can be relied upon to do what they say they will do."
+  ],
+  postTaskMDMT: [
+    "Reliable",
+    "Predictable",
+    "Dependable",
+    "Consistent",
+    "Competent",
+    "Skilled",
+    "Capable",
+    "Meticulous",
+    "Ethical",
+    "Principled",
+    "Moral",
+    "Has integrity",
+    "Transparent",
+    "Genuine",
+    "Sincere",
+    "Candid",
+    "Benevolent",
+    "Kind",
+    "Considerate",
+    "Has goodwill"
+  ]
+}

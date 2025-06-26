@@ -10,7 +10,7 @@ import {
 import { ChoseToHit, HomeFormPageProps } from "@/lib/utils"
 import { Dispatch, ReactNode, SetStateAction, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { ConfidenceSurveyCard } from "../ConfidenceSurveyCard"
+import { ConfidenceCard } from "../ConfidenceCard"
 import { Check, ChevronRight } from "lucide-react"
 import { BackgroundGradient } from "../ui/background-gradient"
 
@@ -65,7 +65,7 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData } : HomeF
 
       </BackgroundGradient>
       
-      {choseToHit && <ConfidenceSurveyCard confidence={preDiscussionConfidence} setConfidence={setPrediscussionConfidence}/>}
+      {choseToHit && <ConfidenceCard confidence={preDiscussionConfidence} setConfidence={setPrediscussionConfidence}/>}
 
       <Button className="hover:cursor-pointer" onClick={() => {
         setUserFormData(o => ({

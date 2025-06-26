@@ -10,7 +10,7 @@ interface ConfidenceSurveyCardProps {
   setConfidence: Dispatch<SetStateAction<number | null>>
 }
 
-export function ConfidenceSurveyCard({ confidence, setConfidence } : ConfidenceSurveyCardProps) {
+export function ConfidenceCard({ confidence, setConfidence } : ConfidenceSurveyCardProps) {
 
     return (
 

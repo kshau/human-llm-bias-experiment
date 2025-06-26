@@ -3,10 +3,10 @@
 import { HomeFormPageProps } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { ConfidenceSurveyCard } from "../ConfidenceSurveyCard";
+import { ConfidenceCard } from "../ConfidenceCard";
 import { ChevronRight } from "lucide-react";
 
-export function PostDiscussionSurveyFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
+export function PostDiscussionConfidenceFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
 
     const [postDiscussionConfidence, setPostDiscussionConfidence] = useState<number | null>(null);
 
@@ -14,7 +14,7 @@ export function PostDiscussionSurveyFormPage({ goToNextFormPage, setUserFormData
 
         <div className="space-y-2 w-[40rem]">
 
-            <ConfidenceSurveyCard confidence={postDiscussionConfidence} setConfidence={setPostDiscussionConfidence}/>
+            <ConfidenceCard confidence={postDiscussionConfidence} setConfidence={setPostDiscussionConfidence}/>
 
             <Button className="hover:cursor-pointer" onClick={() => {
                     setUserFormData(o => ({

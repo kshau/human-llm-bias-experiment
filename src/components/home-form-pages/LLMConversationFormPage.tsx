@@ -24,12 +24,15 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
         {
             from: "user", 
             content: llmBiasPrompts[bias as Bias],
-            visible: false, 
+            visibleToUser: false,
             timestamp: Date.now()
         }
     ])
 
     const [userMessageDraftContent, setUserMessageDraftContent] = useState<string>("");
+    const [userMessageDraftContentRequiredLength, setUserMessageDraftContentRequiredLength] = useState<number>(100);
+    const [userMessageDraftContentLongEnough, setUserMessageDraftContentLongEnough] = useState<boolean>(false);
+
     const [userCanSendMessage, setUserCanSendMessage] = useState<boolean>(false);
     const [userCanMoveToNextFormPage, setUserCanMoveToNextFormPage] = useState<boolean>(false);
 
@@ -52,8 +55,14 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
         
         const res = await axios.post("/api/getLLMConversationResponse", { llmConversationMessages: llmConversationMessages_ });
 
-        if (res.data.endLLMConversation) {
-            setUserCanMoveToNextFormPage(true);
+        switch (res.data.llmConversationEvent) {
+            case "summarize":
+                setUserMessageDraftContentRequiredLength(250);
+                break;
+            case "end":
+                setUserMessageDraftContentRequiredLength(0);
+                setUserCanMoveToNextFormPage(true);
+                break;
         }
 
         setLLMConversationMessages(o => [
@@ -61,7 +70,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
             {
                 from: "model", 
                 content: res.data.llmConversationResponse, 
-                visible: true, 
+                visibleToUser: true,
                 timestamp: Date.now()
             }
         ]);
@@ -75,7 +84,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
         const newLLMConversationMessage: LLMConversationMessage = {
             from: "user", 
             content: userMessageDraftContent, 
-            visible: true, 
+            visibleToUser: true, 
             timestamp: Date.now()
         };
 
@@ -89,9 +98,19 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
     }
 
     const getRandomLLMConversationSummaryData = async () => {
-
         const res = await axios.post("/api/getRandomLLMConversationSummaryData", { bias, block });
         setRandomLLMConversationSummaryData(res.data.llmConversationSummaryData);
+    }
+
+    const formatLLMConversationMessageTimestamp = (timestamp: number) => {
+        const date = new Date(timestamp);
+        let hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const minutesStr = minutes < 10 ? "0" + minutes : minutes;
+        return `${hours}:${minutesStr} ${ampm}`;
     }
 
     useEffect(() => {
@@ -108,6 +127,10 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
 
     }, []);
 
+    useEffect(() => {
+        setUserMessageDraftContentLongEnough(userMessageDraftContent.length >= userMessageDraftContentRequiredLength);
+    }, [userMessageDraftContent])
+
     return (
 
         <div className="space-y-2 w-[50rem]">
@@ -122,7 +145,9 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                             </CardTitle>
                             <CardDescription>
                                 Summary of a previous conversation, written by 
-                                <span className="font-semibold text-primary">{randomLLMConversationSummaryData.by == "user" ? "another user" : "artificial intelligence"}.</span> 
+                                <span className="font-semibold text-primary">
+                                    {randomLLMConversationSummaryData.by == "user" ? "another user" : "artificial intelligence"}.
+                                </span> 
                             </CardDescription>
                         </CardHeader>
 
@@ -149,18 +174,41 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                     <CardContent>
                         <ScrollArea className="pr-4 overflow-y-auto">
                             <div className="flex flex-col space-y-4 h-[50vh]">
-                                {llmConversationMessages.map((message, index) => message.visible && (
+                                {llmConversationMessages.map((message, index) => message.visibleToUser && (
                                     <div className={`${message.from == "model" ? "mr-auto" : "ml-auto"} flex flex-row space-x-2`} id={index.toString()} key={index}>
+
                                         {message.from == "model" ? (
                                             <div className="rounded-full border-1 border-foreground aspect-square w-8 h-8 flex">
                                                 <BotIcon className="m-auto" strokeWidth={1}/>
                                             </div>
                                         ) : <></>}
-                                        <span className={`${message.from == "model" ? "bg-gray-500 rounded-t-xl rounded-br-xl rounded-bl-xs" : "bg-primary  rounded-t-xl rounded-bl-xl rounded-br-xs"} text-white p-2 text-sm max-w-[38rem]`}>
-                                            <ReactMarkdown>
-                                                {message.content}
-                                            </ReactMarkdown>
-                                        </span>
+
+                                        <div className="flex flex-col gap-y-1">
+
+                                            <div
+                                                className={`
+                                                  ${message.from == "model"
+                                                    ? "border rounded-t-xl rounded-br-xl rounded-bl-xs text-black dark:text-white"
+                                                    : "bg-primary rounded-t-xl rounded-bl-xl rounded-br-xs text-white ml-auto"}
+                                                  p-2 text-sm max-w-[38rem] w-fit break-words
+                                                `}
+                                            >
+                                                <ReactMarkdown>
+                                                    {message.content}
+                                                </ReactMarkdown>
+                                            </div>
+
+                                            <span
+                                              className={`
+                                                text-sm text-muted-foreground
+                                                ${message.from === "model" ? "text-left" : "text-right self-end"}
+                                              `}
+                                            >
+                                              {formatLLMConversationMessageTimestamp(message.timestamp || 0)}
+                                            </span>
+
+                                        </div>
+
                                         {message.from == "user" ? (
                                             <div className="rounded-full border-1 border-foreground aspect-square w-8 h-8 flex">
                                                 <UserIcon className="m-auto" strokeWidth={1}/>
@@ -174,22 +222,43 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                         
                         <div className="mt-6 relative max-w-[50rem]">
                             <Textarea
-                                className="resize-none min-h-[2.5rem] pr-12 w-full"
+                                className="resize-none min-h-[2.5rem] pr-26 w-full"
                                 placeholder="Type a message"
                                 onChange={e => {setUserMessageDraftContent(e.target.value)}}
                                 disabled={!userCanSendMessage || userCanMoveToNextFormPage}
                                 value={userMessageDraftContent}
                             />
-                            <Button 
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground cursor-pointer h-fit" 
-                                variant="ghost" 
-                                onClick={sendUserMessageDraft} 
-                                disabled={!userCanSendMessage || userMessageDraftContent.length <= 0 || userCanMoveToNextFormPage}
-                            >
-                                <SendHorizonalIcon className="w-5"/>
-                            </Button>
+
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-row">
+                                
+                                {userMessageDraftContentRequiredLength != 0 && (
+                                    <div className="text-sm my-auto text-muted-foreground">
+                                        <span className={`${!userMessageDraftContentLongEnough && "text-destructive"}`}>{userMessageDraftContent.length}</span>
+                                        <span>/</span>
+                                        <span>{userMessageDraftContentRequiredLength}</span>
+                                    </div>
+                                )}
+                                
+
+                                <Button 
+                                    className="text-muted-foreground hover:text-muted-foreground cursor-pointer h-fit" 
+                                    variant="ghost" 
+                                    onClick={sendUserMessageDraft} 
+                                    disabled={!userCanSendMessage || !userMessageDraftContentLongEnough || userCanMoveToNextFormPage}
+                                >
+                                    <SendHorizonalIcon className="w-5"/>
+                                </Button>
+
+                            </div>
                             
                         </div>
+                        
+                        {!userMessageDraftContentLongEnough && userMessageDraftContent.length > 0 && (
+                            <span className="text-sm text-destructive">
+                                Please provide a longer response.
+                            </span>
+                        )}
+                        
 
                     </CardContent>
 
