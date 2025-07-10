@@ -1,15 +1,14 @@
 "use client"
 
 import { LLMConversationFormPage } from "@/components/home-form-pages/LLMConversationFormPage";
-import { PostDiscussionConfidenceFormPage } from "@/components/home-form-pages/PostDiscussionConfidenceFormPage";
-import { ChoseToHitFormPage } from "@/components/home-form-pages/ChoseToHitFormPage"
+import { ChoseToHitFormPage } from "@/components/home-form-pages/dynamic/ChoseToHitFormPage"
 import { Block, getRandomArrayItem, surveyItemQuestions, UserFormData } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { notFound, useParams } from 'next/navigation';
 import { WelcomeFormPage } from "@/components/home-form-pages/WelcomeFormPage";
 import { DemographicsFormPage } from "@/components/home-form-pages/DemographicsFormPage";
-import { SurveyItemsFormPage } from "@/components/SurveyItemsFormPage";
+import { SurveyItemsFormPage } from "@/components/home-form-pages/dynamic/SurveyItemsFormPage";
 
 
 export default function Home() {
@@ -31,9 +30,10 @@ export default function Home() {
       value: {}, 
       timestamp: null
     },
-    choseToHit: null, 
+    preDiscussionChoseToHit: null, 
     preDiscussionConfidence: null, 
     llmConversationMessages: null, 
+    postDiscussionChoseToHit: null,
     postDiscussionConfidence: null
   });
 
@@ -71,9 +71,7 @@ export default function Home() {
       title="I see myself as someone who"
       surveyItemQuestionCategory={{
         name: "personality",
-        questions: surveyItemQuestions.personality,
-        questionsAgreementLevelValidationIndex: 4, 
-        questionsAgreementLevelValidationValue: 4
+        questions: surveyItemQuestions.personality
       }}
       key="personalityPreDicussionFormPage"
     />,
@@ -123,7 +121,9 @@ export default function Home() {
     <ChoseToHitFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
-      key="choseToHit"
+      userFormDataChoseToHitKey="preDiscussionChoseToHit"
+      userFormDataConfidenceKey="preDiscussionConfidence"
+      key="preDiscussionChoseToHit"
     />,
     <LLMConversationFormPage
       goToNextFormPage={goToNextFormPage}
@@ -132,12 +132,13 @@ export default function Home() {
       block={userFormData.block}
       key="llmConversation"
     />,
-    <PostDiscussionConfidenceFormPage
+    <ChoseToHitFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
-      key="postDiscussionSurvey"
+      userFormDataChoseToHitKey="postDiscussionChoseToHit"
+      userFormDataConfidenceKey="postDiscussionConfidence"
+      key="postDiscussionChoseToHit"
     />,
-
     <SurveyItemsFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}

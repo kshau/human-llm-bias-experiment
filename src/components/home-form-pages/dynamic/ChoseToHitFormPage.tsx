@@ -7,17 +7,24 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import { ChoseToHit, HomeFormPageProps } from "@/lib/utils"
+import { ChoseToHit, UserFormData } from "@/lib/utils"
 import { Dispatch, ReactNode, SetStateAction, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { ConfidenceCard } from "../ConfidenceCard"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card"
 import { Check, ChevronRight } from "lucide-react"
-import { BackgroundGradient } from "../ui/background-gradient"
+import { BackgroundGradient } from "../../ui/background-gradient"
+import { Slider } from "../../ui/slider";
 
-export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
+export interface ChoseToHitFormPageProps {
+  goToNextFormPage: CallableFunction, 
+  setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
+  userFormDataChoseToHitKey: string, 
+  userFormDataConfidenceKey: string
+}
+
+export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userFormDataChoseToHitKey, userFormDataConfidenceKey } : ChoseToHitFormPageProps) {
 
   const [choseToHit, setChoseToHit] = useState<ChoseToHit | null>(null);
-  const [preDiscussionConfidence, setPrediscussionConfidence] = useState<number | null>(null);
+  const [confidence, setConfidence] = useState<number | null>(null);
 
   return (
 
@@ -65,23 +72,23 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData } : HomeF
 
       </BackgroundGradient>
       
-      {choseToHit && <ConfidenceCard confidence={preDiscussionConfidence} setConfidence={setPrediscussionConfidence}/>}
+      {choseToHit && <ChoseToHitFormPageConfidenceCard confidence={confidence} setConfidence={setConfidence}/>}
 
       <Button className="hover:cursor-pointer" onClick={() => {
         setUserFormData(o => ({
             ...o, 
-            choseToHit: {
+            [userFormDataChoseToHitKey]: {
               value: choseToHit || "barrier", 
               timestamp: Date.now()
             },
-            preDiscussionConfidence: {
-              value: preDiscussionConfidence || 4, 
+            [userFormDataConfidenceKey]: {
+              value: confidence || 4, 
               timestamp: Date.now()
             },
           }))
           goToNextFormPage();
         }}
-        disabled={!preDiscussionConfidence}
+        disabled={!confidence}
       >
         Next
         <ChevronRight/>
@@ -132,5 +139,47 @@ function ChoseToHitFormPageOptionHoverCard({ choseToHitOption, userChoseToHit, i
         </HoverCardContent>
       </HoverCard>
   )
+
+}
+
+interface ChoseToHitFormPageConfidenceCardProps {
+  confidence: number | null, 
+  setConfidence: Dispatch<SetStateAction<number | null>>
+}
+
+function ChoseToHitFormPageConfidenceCard({ confidence, setConfidence } : ChoseToHitFormPageConfidenceCardProps) {
+
+    return (
+
+        <BackgroundGradient>
+            <Card className="w-full">
+
+                <CardHeader>
+                    <CardTitle className="text-2xl">
+                        How Confident Are You in Your Judgement?
+                    </CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                    <Slider value={[confidence || 4]} min={1} max={7} step={1} onValueChange={values => {setConfidence(values[0])}} onClick={() => {
+                        if (!confidence) {
+                            setConfidence(4);
+                        }
+                    }}/>
+                    <div className="flex justify-between mt-2 w-[98%] ml-[1%] font-bold">
+                        {[...Array(7).keys()].map(index => (
+                            <span key={index}>{index + 1}</span>
+                        ))}
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground mt-4 font-thin">
+                        <span>Least confidence</span>
+                        <span>Most confidence</span>
+                    </div>
+                </CardContent>
+
+            </Card>
+        </BackgroundGradient>
+
+    )
 
 }

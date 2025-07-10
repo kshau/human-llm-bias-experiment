@@ -68,9 +68,10 @@ export interface UserFormData {
   block: Block,
   demographics: UserFormDataField<Demographics> | null, 
   survey: UserFormDataField<object> | null,
-  choseToHit: UserFormDataField<ChoseToHit> | null, 
+  preDiscussionChoseToHit: UserFormDataField<ChoseToHit> | null, 
   preDiscussionConfidence: UserFormDataField<number> | null,
   llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
+  postDiscussionChoseToHit: UserFormDataField<ChoseToHit> | null,
   postDiscussionConfidence: UserFormDataField<number> | null
 }
 
@@ -448,17 +449,17 @@ export const usStatesAndTerritories = [
 
 export const surveyItemQuestions = {
   personality: [
-    "Is reserved",
-    "Is generally trusting",
-    "Tends to be lazy",
-    "Is relaxed, handles stress well",
-    'Select "Somewhat agree" for this item',
-    "Has few artistic interests",
-    "Is outgoing, sociable",
-    "Tends to find fault with others",
-    "Does a thorough job",
-    "Gets nervous easily",
-    "Has an active imagination"
+    "Is reserved.",
+    "Is generally trusting.",
+    "Tends to be lazy.",
+    "Is relaxed, handles stress well.",
+    'Select "Somewhat agree" for this item.',
+    "Has few artistic interests.",
+    "Is outgoing, sociable.",
+    "Tends to find fault with others.",
+    "Does a thorough job.",
+    "Gets nervous easily.",
+    "Has an active imagination."
   ], 
   individualismCollectivismScale: [
     "I prefer to work with others in a group rather than working alone.",
@@ -466,10 +467,10 @@ export const surveyItemQuestions = {
     "Working with a group is better than working alone."
   ], 
   aiAttitudeScale: [
-    "I believe that AI will improve my life",
-    "I believe that AI will improve my work",
-    "I think I will use AI technology in the future",
-    "I think AI technology is positive for humanity"
+    "I believe that AI will improve my life.",
+    "I believe that AI will improve my work.",
+    "I think I will use AI technology in the future.",
+    "I think AI technology is positive for humanity."
   ], 
   pttForHuman: [
     "Even though I may sometimes suffer the consequences of trusting other people, I still prefer to trust than not to trust them.",
@@ -483,6 +484,7 @@ export const surveyItemQuestions = {
     "I believe that other people have good intentions.",
     "I feel that other people are out to get as much as they can for themselves.",
     "I don't expect that people are willing to assist and support other people.",
+    'Select "Somewhat disagree" for this item.',
     "Most other people are honest.",
     "I feel that other people can be relied upon to do what they say they will do.",
     "One cannot expect to be treated fairly by other people."
@@ -492,6 +494,7 @@ export const surveyItemQuestions = {
     "I feel good about trusting automated technological systems.",
     "I believe that I am generally better off when I do not trust AI systems than when I trust them.",
     "I rarely trust AI systems because I can't handle the uncertainty.",
+    'Select "Neither agree not disagree" for this item.',
     "AI systems are competent.",
     "AI systems have sound knowledge about problems for which they are intended.",
     "I am wary about the capabilities of AI systems.",

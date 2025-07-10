@@ -9,10 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { BackgroundGradient } from "./ui/background-gradient";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
+import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
+import { BackgroundGradient } from "../../ui/background-gradient";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
+import { Button } from "../../ui/button";
 import { ChevronRight } from "lucide-react";
 
 interface SurveyItemsFormPageProps {
@@ -26,9 +26,8 @@ interface SurveyItemsFormPageProps {
 export function SurveyItemsFormPage({ goToNextFormPage, setUserFormData, surveyItemQuestionCategory, numberedAgreementLevelLabels, title } : SurveyItemsFormPageProps) {
 
   const [userCanMoveToNextPage, setUserCanMoveToNextPage] = useState<boolean>(false);
-  const [invalidAgreementLevel, setInvalidAgreementLevel] = useState<boolean>(false);
 
-  const { questions, questionsAgreementLevelValidationIndex, questionsAgreementLevelValidationValue } = surveyItemQuestionCategory;
+  const { questions } = surveyItemQuestionCategory;
 
   const [surveyItems, setSurveyItems] = useState<Array<SurveyItem>>(questions.map(question => ({
     question, 
@@ -38,23 +37,9 @@ export function SurveyItemsFormPage({ goToNextFormPage, setUserFormData, surveyI
 
   useEffect(() => {
 
-    let newInvalidAgreementLevel = false;
-
-    if (questionsAgreementLevelValidationIndex) {
-
-      newInvalidAgreementLevel =
-      ![questionsAgreementLevelValidationValue, null].includes(
-        surveyItems[questionsAgreementLevelValidationIndex].agreementLevel,
-      );
-
-      setInvalidAgreementLevel(newInvalidAgreementLevel);
-
-    }
-
     setUserCanMoveToNextPage(
       !Object.values(surveyItems).some(((surveyItem: SurveyItem) => surveyItem.agreementLevel == null)
-      ) &&
-      !newInvalidAgreementLevel
+      )
     )
 
   }, [surveyItems])
@@ -77,11 +62,6 @@ export function SurveyItemsFormPage({ goToNextFormPage, setUserFormData, surveyI
             <CardContent>
                 <div className="space-y-8">
                   <SurveyItemsTable surveyItems={surveyItems} setSurveyItems={setSurveyItems} numberedAgreementLevelLabels={numberedAgreementLevelLabels} title={title}/>
-                  {invalidAgreementLevel ? (
-                    <span className="text-sm text-destructive">
-                      Please answer the following questions.
-                    </span>
-                  ) : <></>}
                 </div>
                 
             </CardContent>
