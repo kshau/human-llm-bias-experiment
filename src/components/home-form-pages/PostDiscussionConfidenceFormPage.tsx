@@ -1,39 +1,98 @@
 "use client"
 
-import { HomeFormPageProps } from "@/lib/utils";
+import { HomeFormPageProps, ChoseToHit } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { ConfidenceCard } from "../ConfidenceCard";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Check } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { BackgroundGradient } from "../ui/background-gradient";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card";
 
 export function PostDiscussionConfidenceFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
-
+    const [choseToHit, setChoseToHit] = useState<ChoseToHit | null>(null);
     const [postDiscussionConfidence, setPostDiscussionConfidence] = useState<number | null>(null);
 
     return (
-
-        <div className="space-y-2 w-[40rem]">
-
-            <ConfidenceCard confidence={postDiscussionConfidence} setConfidence={setPostDiscussionConfidence}/>
-
+        <div className="space-y-2">
+            <BackgroundGradient>
+                <Card className="w-full">
+                    <CardHeader>
+                        <CardTitle className="text-2xl">
+                            Pick One (Post-Task)
+                        </CardTitle>
+                        <CardDescription>
+                            Hover over each to see more about the situation.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-2 gap-2 w-fit">
+                            <ChoseToHitFormPageOptionHoverCard choseToHitOption="barrier" userChoseToHit={choseToHit} imgSrc="/assets/car-hit-barrier.png" title="Hit The Barrier" description={<div>
+                                In this case, the self-driving car with sudden brake failure will continue ahead and crash into a concrete barrier. This will result in deaths of
+                                <ul className="list-disc list-inside">
+                                    <li>1 man</li>
+                                    <li>1 woman</li>
+                                </ul>
+                            </div>} setChoseToHit={setChoseToHit}/>
+                            <ChoseToHitFormPageOptionHoverCard choseToHitOption="pedestrians" userChoseToHit={choseToHit} imgSrc="/assets/car-hit-pedestrians.png" title="Hit The Pedestrians" description={<div>
+                                In this case, the self-driving car with sudden brake failure will swerve and drive through a pedestrian crossing in the other lane. This will result in deaths of
+                                <ul className="list-disc list-inside">
+                                    <li>1 female athlete</li>
+                                    <li>1 male athlete</li>
+                                </ul>
+                                Note that the affected pedestrians are abiding by the law by crossing on the green signal.
+                            </div>} setChoseToHit={setChoseToHit}/>
+                        </div>
+                    </CardContent>
+                </Card>
+            </BackgroundGradient>
+            {choseToHit && <ConfidenceCard confidence={postDiscussionConfidence} setConfidence={setPostDiscussionConfidence}/>} 
             <Button className="hover:cursor-pointer" onClick={() => {
-                    setUserFormData(o => ({
-                        ...o, 
-                        postDiscussionConfidence: {
-                            value: postDiscussionConfidence || 4, 
-                            timestamp: Date.now()
-                        },
-                    }))
-                    goToNextFormPage();
-                }}
-                disabled={!postDiscussionConfidence}
-            >
+                setUserFormData(o => ({
+                    ...o,
+                    postChoseToHit: {
+                        value: choseToHit || "barrier",
+                        timestamp: Date.now()
+                    },
+                    postDiscussionConfidence: {
+                        value: postDiscussionConfidence || 4,
+                        timestamp: Date.now()
+                    }
+                }));
+                goToNextFormPage();
+            }} disabled={!postDiscussionConfidence}>
                 Next
                 <ChevronRight/>
             </Button>
-
         </div>
+    );
+}
 
-    )
-
+function ChoseToHitFormPageOptionHoverCard({ choseToHitOption, userChoseToHit, imgSrc, title, description, setChoseToHit } : { choseToHitOption: ChoseToHit, userChoseToHit: ChoseToHit | null, imgSrc: string, title: string, description: React.ReactNode, setChoseToHit: (c: ChoseToHit) => void }) {
+    return (
+        <HoverCard>
+            <HoverCardTrigger>
+                <div className="relative inline-block">
+                    <img
+                        src={imgSrc}
+                        className="rounded-lg w-64 hover:cursor-pointer"
+                        onClick={() => setChoseToHit(choseToHitOption)}
+                    />
+                    {choseToHitOption == userChoseToHit && (
+                        <div className="absolute top-2 right-2 bg-blue-500 rounded-full p-1 z-20">
+                            <Check className="w-7 h-7 text-white" />
+                        </div>
+                    )}
+                </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-72">
+                <div className="space-y-2">
+                    <span className="text-lg font-semibold">{title}</span>
+                    <div className="text-md">
+                        {description}
+                    </div>
+                </div>
+            </HoverCardContent>
+        </HoverCard>
+    );
 }

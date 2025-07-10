@@ -71,7 +71,10 @@ export interface UserFormData {
   choseToHit: UserFormDataField<ChoseToHit> | null, 
   preDiscussionConfidence: UserFormDataField<number> | null,
   llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
-  postDiscussionConfidence: UserFormDataField<number> | null
+  postDiscussionConfidence: UserFormDataField<number> | null,
+  prolificId: string | null,
+  consent: boolean | null,
+  postChoseToHit: UserFormDataField<ChoseToHit> | null
 }
 
 export interface UserFormDataField<T> {
@@ -488,7 +491,7 @@ export const surveyItemQuestions = {
     "One cannot expect to be treated fairly by other people."
   ], 
   pttForAI: [
-    "Trusting AI systems, I still prefer to trust than not to trust them.",
+    "Even though I may sometimes suffer the consequences of trusting automated technological systems, I still prefer to trust than not to trust them.",
     "I feel good about trusting automated technological systems.",
     "I believe that I am generally better off when I do not trust AI systems than when I trust them.",
     "I rarely trust AI systems because I can't handle the uncertainty.",
@@ -498,15 +501,17 @@ export const surveyItemQuestions = {
     "AI systems do not have the capabilities that could help me reach my goals.",
     "I believe that AI systems have good intentions.",
     "I feel that AI systems are out to get as much as they can for themselves.",
+    'Select "Not at all" for this item',
     "I don't expect that AI systems are willing to assist and support people.",
     "Most AI systems are honest.",
-    "I feel that AI systems can be relied upon to do what they say they will do."
+    "One cannot expect to be treated fairly by automated technological systems."
   ],
   postTaskMDMT: [
     "Reliable",
     "Predictable",
     "Dependable",
     "Consistent",
+    "Pick seven",
     "Competent",
     "Skilled",
     "Capable",

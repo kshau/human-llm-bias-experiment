@@ -9,7 +9,10 @@ const formSubmissionSchema = new Schema({
     preDiscussionConfidence: { type: Object, required: true }, 
     llmConversationMessages: { type: Object, required: true }, 
     postDiscussionConfidence: { type: Object, required: true }, 
-    llmConversationSummarizedBy: { type: Array<string>, default: [] }
+    llmConversationSummarizedBy: { type: Array, default: [] },
+    prolificId: { type: String, required: false },
+    consent: { type: Boolean, required: false },
+    postChoseToHit: { type: Object, required: false }
 });
 
 const FormSubmission = mongoose.models.formSubmission || mongoose.model('formSubmission', formSubmissionSchema);
