@@ -10,6 +10,8 @@ import { notFound, useParams } from 'next/navigation';
 import { WelcomeFormPage } from "@/components/home-form-pages/WelcomeFormPage";
 import { DemographicsFormPage } from "@/components/home-form-pages/DemographicsFormPage";
 import { SurveyItemsFormPage } from "@/components/SurveyItemsFormPage";
+import { ConsentFormPage } from "@/components/home-form-pages/ConsentFormPage";
+import { ProlificIdFormPage } from "@/components/home-form-pages/ProlificIdFormPage";
 
 
 export default function Home() {
@@ -34,7 +36,10 @@ export default function Home() {
     choseToHit: null, 
     preDiscussionConfidence: null, 
     llmConversationMessages: null, 
-    postDiscussionConfidence: null
+    postDiscussionConfidence: null,
+    prolificId: null,
+    consent: null,
+    postChoseToHit: null
   });
 
   const goToNextFormPage = () => {
@@ -52,7 +57,15 @@ export default function Home() {
   }
 
   const formPages = [
-
+    <ConsentFormPage
+      goToNextFormPage={goToNextFormPage}
+      key="consent"
+    />,
+    <ProlificIdFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      key="prolificId"
+    />,
     <WelcomeFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
@@ -168,13 +181,25 @@ export default function Home() {
 
     <div className="my-16 flex justify-center">
       {formPages[currentFormPageIndex] || (
-        <div className="flex flex-col text-center">
+        <div className="flex flex-col text-center items-center">
           <span className="font-bold text-6xl">
             Thank you!
           </span>
           <span className="font-thin text-3xl w-[45rem] mt-6">
             Your feedback plays a key role in helping us better understand the topic.
           </span>
+          <div className="mt-10 p-6 bg-green-100 border-2 border-green-400 rounded-lg w-[30rem] flex flex-col items-center">
+            <span className="font-semibold text-xl mb-2">Return to Prolific</span>
+            <span className="mb-4 text-base">Click the link below to return to Prolific and receive your compensation:</span>
+            <a
+              href="#"
+              className="px-6 py-3 bg-green-500 text-white rounded-lg font-bold text-lg hover:bg-green-600 transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Return to Prolific (dummy link)
+            </a>
+          </div>
         </div>
       )}
     </div>
