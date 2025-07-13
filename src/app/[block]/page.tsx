@@ -12,6 +12,9 @@ import { DemographicsFormPage } from "@/components/home-form-pages/DemographicsF
 import { SurveyItemsFormPage } from "@/components/SurveyItemsFormPage";
 import { ConsentFormPage } from "@/components/home-form-pages/ConsentFormPage";
 import { ProlificIdFormPage } from "@/components/home-form-pages/ProlificIdFormPage";
+import { MiscellaneousSurveyFormPage } from "@/components/home-form-pages/MiscellaneousSurveyFormPage";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { BackgroundGradient } from "@/components/ui/background-gradient";
 
 
 export default function Home() {
@@ -161,6 +164,16 @@ export default function Home() {
       }}
       key="postTaskMDMTFormPage"
     />,
+
+    <SurveyItemsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      surveyItemQuestionCategory={{
+        name: "miscellaneous",
+        questions: surveyItemQuestions.miscellaneous,
+      }}
+      key="miscellaneousFormPage"
+    />,
   ];
 
   useEffect(() => {
@@ -188,18 +201,26 @@ export default function Home() {
           <span className="font-thin text-3xl w-[45rem] mt-6">
             Your feedback plays a key role in helping us better understand the topic.
           </span>
-          <div className="mt-10 p-6 bg-green-100 border-2 border-green-400 rounded-lg w-[30rem] flex flex-col items-center">
-            <span className="font-semibold text-xl mb-2">Return to Prolific</span>
-            <span className="mb-4 text-base">Click the link below to return to Prolific and receive your compensation:</span>
-            <a
-              href="#"
-              className="px-6 py-3 bg-green-500 text-white rounded-lg font-bold text-lg hover:bg-green-600 transition-colors"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Return to Prolific (dummy link)
-            </a>
-          </div>
+          <BackgroundGradient>
+            <Card className="w-[40rem]">
+              <CardHeader>
+                <CardTitle className="text-xl">Return to Prolific</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4 text-base">
+                  Click the link below to return to Prolific and receive your compensation:
+                </div>
+                <a
+                  href="#"
+                  className="px-6 py-3 bg-green-500 text-white rounded-lg font-bold text-lg hover:bg-green-600 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Return to Prolific (dummy link)
+                </a>
+              </CardContent>
+            </Card>
+          </BackgroundGradient>
         </div>
       )}
     </div>

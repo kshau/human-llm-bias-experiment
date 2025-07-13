@@ -528,5 +528,27 @@ export const surveyItemQuestions = {
     "Kind",
     "Considerate",
     "Has goodwill"
+  ],
+  miscellaneous: [
+    {
+      question: "For the AI that you were having a conversation with, how persuasive did you find the AI to be?",
+      minLabel: "Not persuasive at all",
+      maxLabel: "Extremely persuasive"
+    },
+    {
+      question: "How well did you think the AI understood and responded to what you said?",
+      minLabel: "Very poorly",
+      maxLabel: "Very well"
+    },
+    {
+      question: "How much do you trust the AI that you were having a conversation with?",
+      minLabel: "Do not trust at all",
+      maxLabel: "Fully trust"
+    },
+    {
+      question: "How much did the summary you viewed prior to the conversation affect your decisions?",
+      minLabel: "Not at all",
+      maxLabel: "Very much"
+    }
   ]
 }
