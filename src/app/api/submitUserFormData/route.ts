@@ -1,4 +1,5 @@
 import FormSubmission from "@/lib/db/schemas/FormSubmission";
+import { promptGemini } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -7,7 +8,21 @@ export async function POST(request: NextRequest) {
 
         const { userFormData } = await request.json();
 
-        const formSubmissionDoc = new FormSubmission({ ...userFormData });
+        const modelLLMConversationSummary = await promptGemini([
+            {
+                role: "user", 
+                parts: [{ text: `
+        
+                    SUMMARIZE THE CONVERSATION BETWEEN BELOW.
+                    RETURN ONLY THE SUMMARY.
+        
+                    ${JSON.stringify(userFormData.llmConversationMessages)}
+        
+                ` }]
+            }
+        ])
+
+        const formSubmissionDoc = new FormSubmission({ ...userFormData, modelLLMConversationSummary });
         await formSubmissionDoc.save();
 
         return NextResponse.json({}, { status: 200 });

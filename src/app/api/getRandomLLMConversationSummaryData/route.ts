@@ -1,5 +1,5 @@
 import FormSubmission from "@/lib/db/schemas/FormSubmission";
-import { getRandomArrayItem, LLMConversationSummaryData, promptGemini } from "@/lib/utils";
+import { getRandomArrayItem, LLMConversationSummaryData } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -70,22 +70,8 @@ export async function POST(request: NextRequest) {
 
             selectedFormSubmissionLLMConversationMessages.splice(-3);
 
-            const modelLLMConversationSummary = await promptGemini([
-                {
-                    role: "user", 
-                    parts: [{ text: `
-
-                        SUMMARIZE THE CONVERSATION BETWEEN BELOW.
-                        RETURN ONLY THE SUMMARY.
-
-                        ${JSON.stringify(selectedFormSubmissionLLMConversationMessages)}
-
-                    ` }]
-                }
-            ])
-
             return NextResponse.json({ llmConversationSummaryData: {
-                content: modelLLMConversationSummary, 
+                content: selectedFormSubmissionDoc.modelLLMConversationSummary, 
                 by: summarizeLLMConversationBy
             } as LLMConversationSummaryData }, { status: 200 });
 
