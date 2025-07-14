@@ -20,7 +20,42 @@ export interface LLMConversationFormPageProps {
 
 export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bias, block } : LLMConversationFormPageProps) {
 
+    // ===================== CUSTOM MODIFICATION FOR LLM CONTEXT =====================
+    // The following code injects a context message as the FIRST message to Gemini (the LLM)
+    // describing the participant's trolley problem choice (barrier or pedestrians).
+    // This gives the LLM explicit context for the conversation.
+    //
+    // If you do NOT want the LLM to have this context, you can safely REMOVE this block
+    // and the contextLine message from the llmConversationMessages array below.
+    //
+    // This is NOT required for the basic survey flow and is only for experiments where
+    // the LLM should know the participant's action.
+    // ==============================================================================
+    function getChoseToHitFromStorage() {
+        if (typeof window !== 'undefined') {
+            try {
+                const userFormData = JSON.parse(localStorage.getItem('userFormData') || '{}');
+                return userFormData.choseToHit?.value || 'barrier';
+            } catch {
+                return 'barrier';
+            }
+        }
+        return 'barrier';
+    }
+
+    const choseToHit = getChoseToHitFromStorage();
+    const contextLine =
+        choseToHit === 'barrier'
+            ? 'For context, the participant selected to have the car hit the barrier (sacrificing the passengers) instead of hitting the pedestrians (sacrificing the athletes).'
+            : 'For context, the participant selected to have the car hit the pedestrians (sacrificing the athletes) instead of hitting the barrier (sacrificing the passengers).';
+
     const [llmConversationMessages, setLLMConversationMessages] = useState<Array<LLMConversationMessage>>([
+        {
+            from: "user",
+            content: contextLine,
+            visibleToUser: false,
+            timestamp: Date.now()
+        },
         {
             from: "user", 
             content: llmBiasPrompts[bias as Bias],

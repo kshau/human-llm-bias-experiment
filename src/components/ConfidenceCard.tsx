@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dispatch, SetStateAction } from "react";
-import { Slider } from "./ui/slider";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { BackgroundGradient } from "./ui/background-gradient";
 
 interface ConfidenceSurveyCardProps {
@@ -24,16 +24,23 @@ export function ConfidenceCard({ confidence, setConfidence } : ConfidenceSurveyC
                 </CardHeader>
 
                 <CardContent>
-                    <Slider value={[confidence || 4]} min={1} max={7} step={1} onValueChange={values => {setConfidence(values[0])}} onClick={() => {
-                        if (!confidence) {
-                            setConfidence(4);
-                        }
-                    }}/>
-                    <div className="flex justify-between mt-2 w-[98%] ml-[1%] font-bold">
+                    <RadioGroup
+                        className="flex flex-row justify-between w-full mt-4"
+                        value={confidence !== null ? confidence.toString() : undefined}
+                        onValueChange={val => {
+                            console.log('RadioGroup changed:', val);
+                            setConfidence(Number(val));
+                        }}
+                    >
                         {[...Array(7).keys()].map(index => (
-                            <span key={index}>{index + 1}</span>
+                            <div key={index} className="flex flex-col items-center">
+                                <RadioGroupItem value={(index + 1).toString()} id={`confidence-${index + 1}`} />
+                                <label htmlFor={`confidence-${index + 1}`} className="mt-1 text-sm font-bold cursor-pointer">
+                                    {index + 1}
+                                </label>
+                            </div>
                         ))}
-                    </div>
+                    </RadioGroup>
                     <div className="flex justify-between text-xs text-muted-foreground mt-4 font-thin">
                         <span>Least confidence</span>
                         <span>Most confidence</span>

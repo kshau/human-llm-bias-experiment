@@ -13,6 +13,7 @@ import { SurveyItemsFormPage } from "@/components/SurveyItemsFormPage";
 import { ConsentFormPage } from "@/components/home-form-pages/ConsentFormPage";
 import { ProlificIdFormPage } from "@/components/home-form-pages/ProlificIdFormPage";
 import { MiscellaneousSurveyFormPage } from "@/components/home-form-pages/MiscellaneousSurveyFormPage";
+import { CommitmentCheckFormPage } from "@/components/home-form-pages/CommitmentCheckFormPage";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
 
@@ -25,7 +26,7 @@ export default function Home() {
     notFound();
   }
 
-  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
+  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(10);
   const [shouldSubmitUserFormData, setShouldSubmitUserFormData] = useState<boolean>(false);
 
   const [userFormData, setUserFormData] = useState<UserFormData>({
@@ -63,6 +64,11 @@ export default function Home() {
     <ConsentFormPage
       goToNextFormPage={goToNextFormPage}
       key="consent"
+    />,
+    <CommitmentCheckFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      key="commitmentCheck"
     />,
     <ProlificIdFormPage
       goToNextFormPage={goToNextFormPage}
