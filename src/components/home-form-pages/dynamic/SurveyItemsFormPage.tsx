@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
-import { BackgroundGradient } from "../../ui/background-gradient";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import { Button } from "../../ui/button";
 import { ChevronRight } from "lucide-react";

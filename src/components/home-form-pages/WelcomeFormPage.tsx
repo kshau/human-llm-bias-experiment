@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { HomeFormPageProps } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { ChevronRight } from "lucide-react"
-import { BackgroundGradient } from "../ui/background-gradient";
 
 export function WelcomeFormPage({ goToNextFormPage } : HomeFormPageProps) {
 
