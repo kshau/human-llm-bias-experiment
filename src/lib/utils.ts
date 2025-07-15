@@ -72,7 +72,8 @@ export interface UserFormData {
   preDiscussionConfidence: UserFormDataField<number> | null,
   llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
   postDiscussionChoseToHit: UserFormDataField<ChoseToHit> | null,
-  postDiscussionConfidence: UserFormDataField<number> | null
+  postDiscussionConfidence: UserFormDataField<number> | null, 
+  recievedSummaryFormSubmissionID: UserFormDataField<string> | null, 
 }
 
 export interface UserFormDataField<T> {

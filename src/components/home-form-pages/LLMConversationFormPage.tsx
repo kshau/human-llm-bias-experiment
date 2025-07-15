@@ -9,7 +9,6 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { ScrollArea } from "../ui/scroll-area";
-import { BackgroundGradient } from "../ui/background-gradient";
 
 export interface LLMConversationFormPageProps {
   goToNextFormPage: CallableFunction, 
@@ -98,8 +97,17 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
     }
 
     const getRandomLLMConversationSummaryData = async () => {
+
         const res = await axios.post("/api/getRandomLLMConversationSummaryData", { bias, block });
         setRandomLLMConversationSummaryData(res.data.llmConversationSummaryData);
+
+        if (res.data.llmConversationSummaryData) {
+            setUserFormData(o => ({
+                ...o, 
+                recievedSummaryFormSubmissionID: res.data.llmConversationFormSubmissionID
+            }));
+        }
+
     }
 
     const formatLLMConversationMessageTimestamp = (timestamp: number) => {
@@ -136,7 +144,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
         <div className="space-y-2 w-[50rem]">
 
             {randomLLMConversationSummaryData && (
-                <BackgroundGradient>
+                
                     <Card>
 
                         <CardHeader>
@@ -146,7 +154,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                             <CardDescription>
                                 Summary of a previous conversation, written by 
                                 <span className="font-semibold text-primary">
-                                    {randomLLMConversationSummaryData.by == "user" ? "another user" : "artificial intelligence"}.
+                                    {randomLLMConversationSummaryData.by == "user" ? " another user" : " artificial intelligence"}.
                                 </span> 
                             </CardDescription>
                         </CardHeader>
@@ -156,10 +164,10 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                         </CardContent>
 
                     </Card>
-                </BackgroundGradient>
+                
             )}
             
-            <BackgroundGradient>
+            
                 <Card>
 
                     <CardHeader>
@@ -264,7 +272,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
 
                 </Card>
 
-            </BackgroundGradient>
+            
 
             <Button className="hover:cursor-pointer" onClick={() => {
 

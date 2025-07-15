@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ llmConversationSummaryData: {
                 content: userLLMConversationSummary, 
                 by: summarizeLLMConversationBy
-            } as LLMConversationSummaryData }, { status: 200 });
+            } as LLMConversationSummaryData, llmConversationFormSubmissionID: selectedFormSubmissionDoc.id }, { status: 200 });
 
         }
 
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ llmConversationSummaryData: {
                 content: selectedFormSubmissionDoc.modelLLMConversationSummary, 
                 by: summarizeLLMConversationBy
-            } as LLMConversationSummaryData }, { status: 200 });
+            } as LLMConversationSummaryData, llmConversationFormSubmissionID: selectedFormSubmissionDoc.id }, { status: 200 });
 
         }
 

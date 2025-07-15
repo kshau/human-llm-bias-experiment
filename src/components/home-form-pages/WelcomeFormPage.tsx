@@ -12,7 +12,7 @@ export function WelcomeFormPage({ goToNextFormPage } : HomeFormPageProps) {
 
     <div className="space-y-2">
 
-      <BackgroundGradient>
+      
         <Card className="w-[40rem]">
 
             <CardHeader>
@@ -29,7 +29,7 @@ export function WelcomeFormPage({ goToNextFormPage } : HomeFormPageProps) {
             </CardContent>
 
         </Card>
-      </BackgroundGradient>
+      
 
       <Button className="hover:cursor-pointer" onClick={() => {goToNextFormPage()}}>
         Next

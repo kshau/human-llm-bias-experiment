@@ -34,7 +34,8 @@ export default function Home() {
     preDiscussionConfidence: null, 
     llmConversationMessages: null, 
     postDiscussionChoseToHit: null,
-    postDiscussionConfidence: null
+    postDiscussionConfidence: null, 
+    recievedSummaryFormSubmissionID: null
   });
 
   const goToNextFormPage = () => {

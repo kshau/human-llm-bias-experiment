@@ -1,6 +1,8 @@
 import FormSubmission from "@/lib/db/schemas/FormSubmission";
 import { promptGemini } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
+import { nanoid } from 'nanoid';
+
 
 export async function POST(request: NextRequest) {
 
@@ -22,7 +24,7 @@ export async function POST(request: NextRequest) {
             }
         ])
 
-        const formSubmissionDoc = new FormSubmission({ ...userFormData, modelLLMConversationSummary });
+        const formSubmissionDoc = new FormSubmission({ id: nanoid(8), ...userFormData, modelLLMConversationSummary });
         await formSubmissionDoc.save();
 
         return NextResponse.json({}, { status: 200 });

@@ -11,7 +11,6 @@ import { ChoseToHit, UserFormData } from "@/lib/utils"
 import { Dispatch, ReactNode, SetStateAction, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card"
 import { Check, ChevronRight } from "lucide-react"
-import { BackgroundGradient } from "../../ui/background-gradient"
 import { Slider } from "../../ui/slider";
 
 export interface ChoseToHitFormPageProps {
@@ -30,7 +29,7 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userForm
 
     <div className="space-y-2">
 
-      <BackgroundGradient>
+      
 
         <Card className="w-full">
 
@@ -70,7 +69,7 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userForm
 
         </Card>
 
-      </BackgroundGradient>
+      
       
       {choseToHit && <ChoseToHitFormPageConfidenceCard confidence={confidence} setConfidence={setConfidence}/>}
 
@@ -151,7 +150,7 @@ function ChoseToHitFormPageConfidenceCard({ confidence, setConfidence } : ChoseT
 
     return (
 
-        <BackgroundGradient>
+        
             <Card className="w-full">
 
                 <CardHeader>
@@ -178,7 +177,7 @@ function ChoseToHitFormPageConfidenceCard({ confidence, setConfidence } : ChoseT
                 </CardContent>
 
             </Card>
-        </BackgroundGradient>
+        
 
     )
 

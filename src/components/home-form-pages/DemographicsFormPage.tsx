@@ -11,7 +11,6 @@ import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { SelectValue } from "@radix-ui/react-select";
-import { BackgroundGradient } from "../ui/background-gradient";
 
 export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
 
@@ -122,7 +121,7 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
 
     <div className="space-y-2">
     
-    <BackgroundGradient>
+    
         <Card className="w-[40rem]">
 
             <CardHeader>
@@ -280,7 +279,7 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
 
         </Card>
 
-      </BackgroundGradient>
+      
 
       <Button className="hover:cursor-pointer" onClick={() => {
 

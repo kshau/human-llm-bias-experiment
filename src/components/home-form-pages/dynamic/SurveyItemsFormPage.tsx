@@ -48,7 +48,7 @@ export function SurveyItemsFormPage({ goToNextFormPage, setUserFormData, surveyI
 
     <div className="space-y-2">
 
-      <BackgroundGradient>
+      
         <Card>
 
             <CardHeader>
@@ -68,7 +68,7 @@ export function SurveyItemsFormPage({ goToNextFormPage, setUserFormData, surveyI
 
         </Card>
 
-      </BackgroundGradient>
+      
 
       <Button className="hover:cursor-pointer" onClick={() => {
 
