@@ -4,6 +4,7 @@ const formSubmissionSchema = new Schema({
     id: { type: String, required: true },
     bias: { type: String, required: true },
     block: { type: String, required: true },
+    prolificID: { type: String, required: true },
     demographics: { type: Object, required: true },
     survey: { type: Object, required: true },
     preDiscussionChoseToHit: { type: Object, required: true }, 

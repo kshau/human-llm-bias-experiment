@@ -9,6 +9,11 @@ import { notFound, useParams } from 'next/navigation';
 import { WelcomeFormPage } from "@/components/home-form-pages/WelcomeFormPage";
 import { DemographicsFormPage } from "@/components/home-form-pages/DemographicsFormPage";
 import { SurveyItemsFormPage } from "@/components/home-form-pages/dynamic/SurveyItemsFormPage";
+import { ConsentFormPage } from "@/components/home-form-pages/ConsentFormPage";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { SquareArrowOutUpRightIcon } from "lucide-react";
+import { ProlificIDFormPage } from "@/components/home-form-pages/ProlificIDFormPage";
 
 
 export default function Home() {
@@ -23,6 +28,7 @@ export default function Home() {
   const [shouldSubmitUserFormData, setShouldSubmitUserFormData] = useState<boolean>(false);
 
   const [userFormData, setUserFormData] = useState<UserFormData>({
+    prolificID: null,
     bias: getRandomArrayItem(["neutral", "utilitarian", "deontological"]),
     block: params.block as Block,
     demographics: null,
@@ -53,7 +59,16 @@ export default function Home() {
   }
 
   const formPages = [
-
+    <ConsentFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      key="consent"
+    />,
+    <ProlificIDFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      key="prolificID"
+    />,
     <WelcomeFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
@@ -169,14 +184,33 @@ export default function Home() {
   return (
 
     <div className="my-16 flex justify-center">
+
       {formPages[currentFormPageIndex] || (
-        <div className="flex flex-col text-center">
+        <div className="flex flex-col text-center items-center">
           <span className="font-bold text-6xl">
             Thank you!
           </span>
           <span className="font-thin text-3xl w-[45rem] mt-6">
             Your feedback plays a key role in helping us better understand the topic.
           </span>
+          
+          <Card className="w-96 mt-12">
+            <CardHeader>
+              <CardTitle className="text-2xl">
+                Return to Prolific
+              </CardTitle>
+              <CardDescription>
+                Click the link below to return to Prolific and recieve your compensation.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline">
+                <SquareArrowOutUpRightIcon/>
+                Return to Prolific (dummy link)
+              </Button>
+            </CardContent>
+          </Card>
+
         </div>
       )}
     </div>
