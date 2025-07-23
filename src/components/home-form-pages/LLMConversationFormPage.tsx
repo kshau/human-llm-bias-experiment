@@ -1,6 +1,6 @@
 "use client"
 
-import { Bias, Block, llmBiasPrompts, LLMConversationMessage, LLMConversationSummaryData, UserFormData } from "@/lib/utils";
+import { Bias, llmBiasPrompts, LLMConversationMessage, LLMConversationSummaryData, UserFormData } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
@@ -13,11 +13,11 @@ import { ScrollArea } from "../ui/scroll-area";
 export interface LLMConversationFormPageProps {
   goToNextFormPage: CallableFunction, 
   setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
-  bias: Bias,
-  block: Block
+  referenceFormSubmissionID: string | null, 
+  bias: Bias
 }
 
-export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bias, block } : LLMConversationFormPageProps) {
+export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, referenceFormSubmissionID, bias } : LLMConversationFormPageProps) {
 
     const [llmConversationMessages, setLLMConversationMessages] = useState<Array<LLMConversationMessage>>([
         {
@@ -35,11 +35,11 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
     const [userCanSendMessage, setUserCanSendMessage] = useState<boolean>(false);
     const [userCanMoveToNextFormPage, setUserCanMoveToNextFormPage] = useState<boolean>(false);
 
-    const [randomLLMConversationSummaryData, setRandomLLMConversationSummaryData] = useState<LLMConversationSummaryData | null>(null);
+    const [referenceLLMConversationSummaryData, setReferenceLLMConversationSummaryData] = useState<LLMConversationSummaryData | null>(null);
 
     const llmConversationScrollAreaRef = useRef<HTMLDivElement>(null);
     const recievedInitialLLMConversationMessage = useRef(false);
-    const recievedRandomLLMConversationSummaryData = useRef(false);
+    const recievedReferenceLLMConversationSummaryData = useRef(false);
     
     useEffect(() => {
 
@@ -96,18 +96,9 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
         getLLMConversationResponse(newLLMConversationMessages);
     }
 
-    const getRandomLLMConversationSummaryData = async () => {
-
-        const res = await axios.post("/api/getRandomLLMConversationSummaryData", { bias, block });
-        setRandomLLMConversationSummaryData(res.data.llmConversationSummaryData);
-
-        if (res.data.llmConversationSummaryData) {
-            setUserFormData(o => ({
-                ...o, 
-                recievedSummaryFormSubmissionID: res.data.llmConversationFormSubmissionID
-            }));
-        }
-
+    const getReferenceLLMConversationSummaryData = async () => {
+        const res = await axios.post("/api/getReferenceLLMConversationSummaryData", { referenceFormSubmissionID });
+        setReferenceLLMConversationSummaryData(res.data.referenceLLMConversationSummaryData);
     }
 
     const formatLLMConversationMessageTimestamp = (timestamp: number) => {
@@ -123,9 +114,9 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
 
     useEffect(() => {
 
-        if (block != "1" && !recievedRandomLLMConversationSummaryData.current) {
-            getRandomLLMConversationSummaryData();
-            recievedRandomLLMConversationSummaryData.current = true;
+        if (!recievedReferenceLLMConversationSummaryData.current) {
+            getReferenceLLMConversationSummaryData();
+            recievedReferenceLLMConversationSummaryData.current = true;
         }
 
         if (!recievedInitialLLMConversationMessage.current) {
@@ -143,7 +134,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
 
         <div className="space-y-2 w-[50rem]">
 
-            {randomLLMConversationSummaryData && (
+            {referenceLLMConversationSummaryData && (
                 
                     <Card>
 
@@ -154,13 +145,13 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, bia
                             <CardDescription>
                                 Summary of a previous conversation, written by 
                                 <span className="font-semibold text-primary">
-                                    {randomLLMConversationSummaryData.by == "user" ? " another user" : " artificial intelligence"}.
+                                    {referenceLLMConversationSummaryData.by == "user" ? " another user" : " artificial intelligence"}.
                                 </span> 
                             </CardDescription>
                         </CardHeader>
 
-                        <CardContent>
-                            {randomLLMConversationSummaryData.content}
+                        <CardContent className="break-words">
+                            {referenceLLMConversationSummaryData.content}
                         </CardContent>
 
                     </Card>

@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button"
 
-import { ChoseToHit, UserFormData } from "@/lib/utils"
+import { ChoseToHitOption, ChoseToHitOptionsSet, UserFormData } from "@/lib/utils"
 import { Dispatch, ReactNode, SetStateAction, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Check, ChevronRight } from "lucide-react"
@@ -11,12 +11,12 @@ export interface ChoseToHitFormPageProps {
   goToNextFormPage: CallableFunction, 
   setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
   userFormDataChoseToHitKey: string, 
-  userFormDataConfidenceKey: string
+  optionsSet: ChoseToHitOptionsSet
 }
 
-export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userFormDataChoseToHitKey, userFormDataConfidenceKey } : ChoseToHitFormPageProps) {
+export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userFormDataChoseToHitKey, optionsSet } : ChoseToHitFormPageProps) {
 
-  const [choseToHit, setChoseToHit] = useState<ChoseToHit | null>(null);
+  const [selectedOption, setSelectedOption] = useState<ChoseToHitOption | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
 
   return (
@@ -35,22 +35,22 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userForm
 
                 <div className="grid grid-cols-2 gap-2 w-fit">
 
-                    <ChoseToHitFormPageOptionCard choseToHitOption="barrier" userChoseToHit={choseToHit} imgSrc="/assets/car-hit-barrier.png" description={<div className="w-40">
+                    <ChoseToHitFormPageOptionCard choseToHitOption="barrier" userChoseToHitOption={selectedOption} imgSrc={`/assets/chose-to-hit-options-set-${optionsSet}/barrier.png`} description={<div className="w-40">
                     In this case, the self-driving car with sudden brake failure will continue ahead and crash into a concrete barrier. This will result in deaths of
                     <ul className="list-disc list-inside">
                         <li>1 man</li>
                         <li>1 woman</li>
                     </ul>
-                    </div>} showDescriptionOnSide="left" setChoseToHit={setChoseToHit}/>
+                    </div>} showDescriptionOnSide="left" setChoseToHitSelectedOption={setSelectedOption}/>
 
-                    <ChoseToHitFormPageOptionCard choseToHitOption="pedestrians" userChoseToHit={choseToHit} imgSrc="/assets/car-hit-pedestrians.png" description={<div className="w-40">
+                    <ChoseToHitFormPageOptionCard choseToHitOption="pedestrians" userChoseToHitOption={selectedOption}  imgSrc={`/assets/chose-to-hit-options-set-${optionsSet}/pedestrians.png`} description={<div className="w-40">
                     In this case, the self-driving car with sudden brake failure will swerve and drive through a pedestrian crossing in the other lane. This will result in deaths of
                     <ul className="list-disc list-inside">
                         <li>1 female athlete</li>
                         <li>1 male athlete</li>
                     </ul>
                     Note that the affected pedestrians are abiding by the law by crossing on the green signal.
-                    </div>} showDescriptionOnSide="right" setChoseToHit={setChoseToHit}/>
+                    </div>} showDescriptionOnSide="right" setChoseToHitSelectedOption={setSelectedOption}/>
 
                 </div>
 
@@ -60,17 +60,16 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userForm
 
       
       
-      {choseToHit && <ChoseToHitFormPageConfidenceCard setConfidence={setConfidence}/>}
+      {selectedOption && <ChoseToHitFormPageConfidenceCard setChoseToHitConfidence={setConfidence}/>}
 
       <Button className="hover:cursor-pointer" onClick={() => {
         setUserFormData(o => ({
             ...o, 
             [userFormDataChoseToHitKey]: {
-              value: choseToHit || "barrier", 
-              timestamp: Date.now()
-            },
-            [userFormDataConfidenceKey]: {
-              value: confidence || 4, 
+              value: {
+                selectedOption, 
+                confidence
+              }, 
               timestamp: Date.now()
             },
           }))
@@ -89,15 +88,15 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userForm
 }
 
 interface ChoseToHitFormPageOptionHoverCardProps {
-  choseToHitOption: ChoseToHit,
-  userChoseToHit: ChoseToHit | null,
+  choseToHitOption: ChoseToHitOption,
+  userChoseToHitOption: ChoseToHitOption | null,
   imgSrc: string, 
   description: ReactNode, 
   showDescriptionOnSide: "right" | "left",
-  setChoseToHit: Dispatch<SetStateAction<ChoseToHit | null>>
+  setChoseToHitSelectedOption: Dispatch<SetStateAction<ChoseToHitOption | null>>
 }
 
-function ChoseToHitFormPageOptionCard({ choseToHitOption, userChoseToHit, imgSrc, description, showDescriptionOnSide, setChoseToHit } : ChoseToHitFormPageOptionHoverCardProps) {
+function ChoseToHitFormPageOptionCard({ choseToHitOption, userChoseToHitOption, imgSrc, description, showDescriptionOnSide, setChoseToHitSelectedOption } : ChoseToHitFormPageOptionHoverCardProps) {
 
   return (
 
@@ -109,9 +108,9 @@ function ChoseToHitFormPageOptionCard({ choseToHitOption, userChoseToHit, imgSrc
         <img
           src={imgSrc}
           className="rounded-lg w-64 hover:cursor-pointer"
-          onClick={() => setChoseToHit(choseToHitOption)}
+          onClick={() => setChoseToHitSelectedOption(choseToHitOption)}
         />
-        {choseToHitOption == userChoseToHit && (
+        {choseToHitOption == userChoseToHitOption && (
           <div className="absolute top-2 right-2 bg-blue-500 rounded-full p-1 z-20">
             <Check className="w-7 h-7 text-white" />
           </div>
@@ -127,10 +126,10 @@ function ChoseToHitFormPageOptionCard({ choseToHitOption, userChoseToHit, imgSrc
 }
 
 interface ChoseToHitFormPageConfidenceCardProps {
-  setConfidence: Dispatch<SetStateAction<number | null>>
+  setChoseToHitConfidence: Dispatch<SetStateAction<number | null>>
 }
 
-function ChoseToHitFormPageConfidenceCard({ setConfidence } : ChoseToHitFormPageConfidenceCardProps) {
+function ChoseToHitFormPageConfidenceCard({ setChoseToHitConfidence } : ChoseToHitFormPageConfidenceCardProps) {
 
     return (
         
@@ -143,7 +142,7 @@ function ChoseToHitFormPageConfidenceCard({ setConfidence } : ChoseToHitFormPage
                 </CardHeader>
 
                 <CardContent>
-                    <RadioGroup className={`flex flex-row justify-between`} onValueChange={value => {setConfidence(parseInt(value))}}>
+                    <RadioGroup className={`flex flex-row justify-between`} onValueChange={value => {setChoseToHitConfidence(parseInt(value))}}>
                       {[...Array(7)].map((_, index) => (
                         <RadioGroupItem value={(index + 1).toString()} key={index} className="w-6 h-6"/>
                       ))}

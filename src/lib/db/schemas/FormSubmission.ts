@@ -7,14 +7,14 @@ const formSubmissionSchema = new Schema({
     prolificID: { type: String, required: true },
     demographics: { type: Object, required: true },
     survey: { type: Object, required: true },
+    choseToHitOptionsSet: { type: String, required: true },
     preDiscussionChoseToHit: { type: Object, required: true }, 
-    preDiscussionConfidence: { type: Object, required: true }, 
     llmConversationMessages: { type: Object, required: true }, 
     postDiscussionChoseToHit: { type: Object, required: true }, 
-    postDiscussionConfidence: { type: Object, required: true }, 
     modelLLMConversationSummary: { type: String, required: true },
     llmConversationSummarizedBy: { type: Array<string>, default: [] }, 
-    recievedSummaryFormSubmissionID: { type: String, default: null }
+    referenceFormSubmissionID: { type: String, default: null }, 
+    isReferenced: { type: Boolean, default: false }
 });
 
 const FormSubmission = mongoose.models.formSubmission || mongoose.model('formSubmission', formSubmissionSchema);

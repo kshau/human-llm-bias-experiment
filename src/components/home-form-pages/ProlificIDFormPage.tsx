@@ -31,7 +31,7 @@ export function ProlificIDFormPage({ goToNextFormPage, setUserFormData } : HomeF
 
             <CardContent>
 
-                <Input placeholder="Prolific ID" className="w-80" type="password" onChange={e => setProlificID(e.target.value)}/>
+                <Input placeholder="Prolific ID" className="w-80" onChange={e => setProlificID(e.target.value)}/>
 
                 <div className="flex gap-3 mt-4">
                     <Checkbox onCheckedChange={checked => setConfirmProlificID(checked as boolean)} checked={confirmProlificID}/>

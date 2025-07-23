@@ -61,7 +61,13 @@ export interface SurveyItemQuestionCategory {
   questionsAgreementLevelValidationValue?: number
 }
 
-export type ChoseToHit = "barrier" | "pedestrians"
+export type ChoseToHitOptionsSet = "1" | "2" | "3";
+export type ChoseToHitOption = "barrier" | "pedestrians";
+
+export interface ChoseToHit {
+  selectedOption: ChoseToHitOption, 
+  confidence: number
+}
 
 export interface UserFormData {
   bias: Bias,
@@ -69,12 +75,11 @@ export interface UserFormData {
   prolificID: string | null,
   demographics: UserFormDataField<Demographics> | null, 
   survey: UserFormDataField<object> | null,
+  choseToHitOptionsSet: ChoseToHitOptionsSet,
   preDiscussionChoseToHit: UserFormDataField<ChoseToHit> | null, 
-  preDiscussionConfidence: UserFormDataField<number> | null,
   llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
   postDiscussionChoseToHit: UserFormDataField<ChoseToHit> | null,
-  postDiscussionConfidence: UserFormDataField<number> | null, 
-  recievedSummaryFormSubmissionID: UserFormDataField<string> | null, 
+  referenceFormSubmissionID: string | null
 }
 
 export interface UserFormDataField<T> {

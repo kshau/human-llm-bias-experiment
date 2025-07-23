@@ -36,13 +36,26 @@ export default function Home() {
       value: {}, 
       timestamp: null
     },
+    choseToHitOptionsSet: getRandomArrayItem(["1", "2", "3"]),
     preDiscussionChoseToHit: null, 
-    preDiscussionConfidence: null, 
     llmConversationMessages: null, 
     postDiscussionChoseToHit: null,
-    postDiscussionConfidence: null, 
-    recievedSummaryFormSubmissionID: null
+    referenceFormSubmissionID: null
   });
+
+  const getRandomReferenceFormSubmissionID = async () => {
+
+    const res = await axios.post("/api/getRandomReferenceFormSubmissionData", { bias: userFormData.bias, block: userFormData.block });
+
+    if (res.data.referenceFormSubmissionID) {
+      setUserFormData(o => ({
+      ...o, 
+        choseToHitOptionsSet: res.data.referenceFormSubmissionChoseToHitOptionsSet, 
+        referenceFormSubmissionID: res.data.referenceFormSubmissionID
+      }))
+    }
+    
+  }
 
   const goToNextFormPage = () => {
 
@@ -57,6 +70,10 @@ export default function Home() {
   const submitUserFormData = async () => {
     await axios.post("/api/submitUserFormData", { userFormData });
   }
+
+  useEffect(() => {
+    getRandomReferenceFormSubmissionID();
+  }, [])
 
   const formPages = [
     <ConsentFormPage
@@ -138,21 +155,21 @@ export default function Home() {
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
       userFormDataChoseToHitKey="preDiscussionChoseToHit"
-      userFormDataConfidenceKey="preDiscussionConfidence"
+      optionsSet={userFormData.choseToHitOptionsSet}
       key="preDiscussionChoseToHit"
     />,
     <LLMConversationFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
       bias={userFormData.bias}
-      block={userFormData.block}
+      referenceFormSubmissionID={userFormData.referenceFormSubmissionID}
       key="llmConversation"
     />,
     <ChoseToHitFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
       userFormDataChoseToHitKey="postDiscussionChoseToHit"
-      userFormDataConfidenceKey="postDiscussionConfidence"
+      optionsSet={userFormData.choseToHitOptionsSet}
       key="postDiscussionChoseToHit"
     />,
     <SurveyItemsFormPage
