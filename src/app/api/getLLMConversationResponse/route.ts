@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         }
 
         else if (llmConversationMessages.length >= 11) {
-          llmConversationResponse = "Please summarize the conversation we just had.";
+          llmConversationResponse = "To help better train our future LLM model, please reflect and provide a summarization of our conversation and reiterate your thought process on the decision you just made.";
           llmConversationEvent = "summarize";
         }
 

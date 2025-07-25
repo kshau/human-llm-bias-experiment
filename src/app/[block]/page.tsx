@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
 import { ProlificIDFormPage } from "@/components/home-form-pages/ProlificIDFormPage";
+import { PrimaryTaskIntroFormPage } from "@/components/home-form-pages/PrimaryTaskIntroFormPage";
 
 
 export default function Home() {
@@ -91,7 +92,10 @@ export default function Home() {
       setUserFormData={setUserFormData}
       key="welcome"
     />,
-
+    <PrimaryTaskIntroFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+    />,
     <DemographicsFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
@@ -101,7 +105,7 @@ export default function Home() {
     <SurveyItemsFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
-      title="I see myself as someone who"
+      title="I See Myself As Someone Who"
       surveyItemQuestionCategory={{
         name: "personality",
         questions: surveyItemQuestions.personality
@@ -137,6 +141,7 @@ export default function Home() {
         name: "pttForHuman",
         questions: surveyItemQuestions.pttForHuman,
       }}
+      title="This Scale Refers to Your Trust in Humans"
       key="pttForHumanPreDicussionFormPage"
     />,
 
@@ -148,6 +153,7 @@ export default function Home() {
         name: "pttForAI",
         questions: surveyItemQuestions.pttForAI,
       }}
+      title="This Scale Refers to Your Trust in AI"
       key="pttForAIPreDicussionFormPage"
     />,
 
@@ -163,6 +169,8 @@ export default function Home() {
       setUserFormData={setUserFormData}
       bias={userFormData.bias}
       referenceFormSubmissionID={userFormData.referenceFormSubmissionID}
+      userChoseToHit={userFormData.preDiscussionChoseToHit?.value || { selectedOption: "barrier", confidence: 4 }}
+      choseToHitOptionsSet={userFormData.choseToHitOptionsSet}
       key="llmConversation"
     />,
     <ChoseToHitFormPage
@@ -170,6 +178,7 @@ export default function Home() {
       setUserFormData={setUserFormData}
       userFormDataChoseToHitKey="postDiscussionChoseToHit"
       optionsSet={userFormData.choseToHitOptionsSet}
+      title="Reselect Your Choice After Your Discussions With LLM Agent"
       key="postDiscussionChoseToHit"
     />,
     <SurveyItemsFormPage
@@ -180,7 +189,23 @@ export default function Home() {
         name: "postTaskMDMT",
         questions: surveyItemQuestions.postTaskMDMT,
       }}
+      title="Please Rate The AI Scale"
+      minAgreementLabel="Not at all"
+      maxAgreementLabel="Very"
+      doesNotFitOption={true}
       key="postTaskMDMTFormPage"
+    />,
+    <SurveyItemsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      numberedAgreementLevelLabels={7}
+      surveyItemQuestionCategory={{
+        name: "miscQuestions",
+        questions: surveyItemQuestions.miscQuestions,
+      }}
+      minAgreementLabel=""
+      maxAgreementLabel=""
+      key="miscQuestionsFormPage"
     />,
   ];
 

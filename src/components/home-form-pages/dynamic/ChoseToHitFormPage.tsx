@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button"
 
-import { ChoseToHitOption, ChoseToHitOptionsSet, UserFormData } from "@/lib/utils"
+import { ChoseToHitOption, choseToHitOptionData, ChoseToHitOptionsSet, UserFormData } from "@/lib/utils"
 import { Dispatch, ReactNode, SetStateAction, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Check, ChevronRight } from "lucide-react"
@@ -11,10 +11,11 @@ export interface ChoseToHitFormPageProps {
   goToNextFormPage: CallableFunction, 
   setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
   userFormDataChoseToHitKey: string, 
-  optionsSet: ChoseToHitOptionsSet
+  optionsSet: ChoseToHitOptionsSet, 
+  title?: string
 }
 
-export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userFormDataChoseToHitKey, optionsSet } : ChoseToHitFormPageProps) {
+export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userFormDataChoseToHitKey, optionsSet, title = "Pick One" } : ChoseToHitFormPageProps) {
 
   const [selectedOption, setSelectedOption] = useState<ChoseToHitOption | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
@@ -27,7 +28,7 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userForm
 
             <CardHeader>
                 <CardTitle className="text-2xl">
-                    Pick One
+                    {title}
                 </CardTitle>
             </CardHeader>
 
@@ -35,22 +36,23 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userForm
 
                 <div className="grid grid-cols-2 gap-2 w-fit">
 
-                    <ChoseToHitFormPageOptionCard choseToHitOption="barrier" userChoseToHitOption={selectedOption} imgSrc={`/assets/chose-to-hit-options-set-${optionsSet}/barrier.png`} description={<div className="w-40">
-                    In this case, the self-driving car with sudden brake failure will continue ahead and crash into a concrete barrier. This will result in deaths of
-                    <ul className="list-disc list-inside">
-                        <li>1 man</li>
-                        <li>1 woman</li>
-                    </ul>
-                    </div>} showDescriptionOnSide="left" setChoseToHitSelectedOption={setSelectedOption}/>
+                    <ChoseToHitFormPageOptionCard 
+                      choseToHitOption="barrier" 
+                      choseToHitOptionsSet={optionsSet}
+                      userChoseToHitOption={selectedOption}
+                      imgSrc={`/assets/chose-to-hit-options-set-${optionsSet}/barrier.png`} 
+                      showDescriptionOnSide="left" 
+                      setChoseToHitSelectedOption={setSelectedOption}
+                    />
 
-                    <ChoseToHitFormPageOptionCard choseToHitOption="pedestrians" userChoseToHitOption={selectedOption}  imgSrc={`/assets/chose-to-hit-options-set-${optionsSet}/pedestrians.png`} description={<div className="w-40">
-                    In this case, the self-driving car with sudden brake failure will swerve and drive through a pedestrian crossing in the other lane. This will result in deaths of
-                    <ul className="list-disc list-inside">
-                        <li>1 female athlete</li>
-                        <li>1 male athlete</li>
-                    </ul>
-                    Note that the affected pedestrians are abiding by the law by crossing on the green signal.
-                    </div>} showDescriptionOnSide="right" setChoseToHitSelectedOption={setSelectedOption}/>
+                    <ChoseToHitFormPageOptionCard 
+                      choseToHitOption="pedestrians"
+                      choseToHitOptionsSet={optionsSet}
+                      userChoseToHitOption={selectedOption}  
+                      imgSrc={`/assets/chose-to-hit-options-set-${optionsSet}/pedestrians.png`} 
+                      showDescriptionOnSide="right" 
+                      setChoseToHitSelectedOption={setSelectedOption}
+                    />
 
                 </div>
 
@@ -89,20 +91,30 @@ export function ChoseToHitFormPage({ goToNextFormPage, setUserFormData, userForm
 
 interface ChoseToHitFormPageOptionHoverCardProps {
   choseToHitOption: ChoseToHitOption,
+  choseToHitOptionsSet: ChoseToHitOptionsSet,
   userChoseToHitOption: ChoseToHitOption | null,
   imgSrc: string, 
-  description: ReactNode, 
   showDescriptionOnSide: "right" | "left",
   setChoseToHitSelectedOption: Dispatch<SetStateAction<ChoseToHitOption | null>>
 }
 
-function ChoseToHitFormPageOptionCard({ choseToHitOption, userChoseToHitOption, imgSrc, description, showDescriptionOnSide, setChoseToHitSelectedOption } : ChoseToHitFormPageOptionHoverCardProps) {
+function ChoseToHitFormPageOptionCard({ choseToHitOption, userChoseToHitOption, imgSrc, choseToHitOptionsSet, showDescriptionOnSide, setChoseToHitSelectedOption } : ChoseToHitFormPageOptionHoverCardProps) {
+
+  const descriptionElem = <div className="w-40">
+                            {(choseToHitOption == "barrier" ? choseToHitOptionData.hitBarrierMessage : choseToHitOptionData.hitPedestriansMessage).prefix}
+                            <ul className="list-disc list-inside">
+                                {(choseToHitOptionData.deathsByOptionsSet[choseToHitOptionsSet])[choseToHitOption].map((death, index) => (
+                                  <li key={index}>{death}</li>
+                                ))}
+                            </ul>
+                            {(choseToHitOption == "barrier" ? choseToHitOptionData.hitBarrierMessage : choseToHitOptionData.hitPedestriansMessage).suffix}
+                          </div>
 
   return (
 
     <div className="flex flex-row gap-x-4">
 
-      {showDescriptionOnSide == "left" && description}
+      {showDescriptionOnSide == "left" && descriptionElem}
 
       <div className="relative inline-block">
         <img
@@ -117,7 +129,7 @@ function ChoseToHitFormPageOptionCard({ choseToHitOption, userChoseToHitOption, 
         )}
       </div>
 
-      {showDescriptionOnSide == "right" && description}
+      {showDescriptionOnSide == "right" && descriptionElem}
 
     </div>
 
