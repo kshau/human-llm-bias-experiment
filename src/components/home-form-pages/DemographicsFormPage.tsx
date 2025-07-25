@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button"
 
-import { Demographics, demographicsChoices, HomeFormPageProps } from "@/lib/utils";
+import { countries, Demographics, HomeFormPageProps, usStatesAndTerritories } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { ChevronRight } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
@@ -13,6 +13,79 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { SelectValue } from "@radix-ui/react-select";
 
 export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
+
+  const genderChoices = [
+    {
+        label: "Male", 
+        value: "male"
+    }, 
+    {
+        label: "Female", 
+        value: "female"
+    }, 
+    {
+        label: "Non-binary third gender", 
+        value: "nonBinary"
+    }, 
+    {
+        label: "Prefer not to answer", 
+        value: "preferNotToAnswer"
+    }
+  ]
+
+  const raceChoices = [
+    {
+        label: "White or Caucasian", 
+        value: "whiteOrCaucasian"
+    }, 
+    {
+        label: "Black or African American", 
+        value: "blackOrAfricanAmerican"
+    }, 
+    {
+        label: "Asian", 
+        value: "asian"
+    }, 
+    {
+        label: "Native Hawaiian or other Pacific Islander", 
+        value: "nativeHawaiianOrOtherPacificIslander"
+    }, 
+    {
+        label: "Other", 
+        value: "other"
+    }, 
+    {
+        label: "Prefer not to answer", 
+        value: "preferNotToAnswer"
+    }
+  ]
+
+  const highestEducationLevelChoices = [
+    {
+        label: "Some high school or less", 
+        value: "someHighSchoolOrLess"
+    }, 
+    {
+        label: "High school or GED", 
+        value: "highSchoolOrGED"
+    }, 
+    {
+        label: "Some college", 
+        value: "someCollege"
+    }, 
+    {
+        label: "Associate's degree", 
+        value: "associatesDegree"
+    }, 
+    {
+        label: "Bachelor's degree", 
+        value: "bachelorsDegree"
+    }, 
+    {
+        label: "Graduate or professional degree (MA, MS, MBA, PhD, JD, etc.)", 
+        value: "graduateOrProfessionalDegree"
+    }, 
+  ]
 
   const [invalidAge, setInvalidAge] = useState<boolean>(false);
   const [userCanMoveToNextPage, setUserCanMoveToNextPage] = useState<boolean>(false);
@@ -81,7 +154,7 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
                                     gender: value
                                 }))
                             }}>
-                                {demographicsChoices.genders.map(choice => (
+                                {genderChoices.map(choice => (
                                     <div className="flex items-center gap-3" key={choice.value}>
                                         <RadioGroupItem value={choice.value} id={choice.value}/>
                                         <Label htmlFor={choice.value}>{choice.label}</Label>
@@ -92,7 +165,7 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
                         <div>
                             <span className="font-semibold">Choose one or more races you consider yourself to be.</span><DemographicsFormPageRedAsterisk/>
                             <div className="mt-4 space-y-3">
-                                {demographicsChoices.races.map(choice => (
+                                {raceChoices.map(choice => (
                                     <div className="flex items-center gap-3" key={choice.value}>
                                         <Checkbox 
                                             id={choice.value} 
@@ -136,7 +209,7 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
                                         highestEducationLevel: value
                                     }))
                                 }}>
-                                {demographicsChoices.highestEducationLevels.map(choice => (
+                                {highestEducationLevelChoices.map(choice => (
                                     <div className="flex items-center gap-3" key={choice.value}>
                                         <RadioGroupItem value={choice.value} id={choice.value}/>
                                         <Label htmlFor={choice.value}>{choice.label}</Label>
@@ -167,7 +240,7 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
                                         <SelectValue placeholder="Select a country"/>
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {demographicsChoices.countries.map((country, index) => (
+                                        {countries.map((country, index) => (
                                             <SelectItem value={country.value} key={index}>
                                                 {country.label}
                                             </SelectItem>
@@ -191,7 +264,7 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
                                             <SelectValue placeholder="Select a state or territory"/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {demographicsChoices.usStatesAndTerritories.map((stateOrTerritory, index) => (
+                                            {usStatesAndTerritories.map((stateOrTerritory, index) => (
                                                 <SelectItem value={stateOrTerritory.value} key={index}>
                                                     {stateOrTerritory.label}
                                                 </SelectItem>

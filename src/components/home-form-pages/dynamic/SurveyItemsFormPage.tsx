@@ -18,23 +18,11 @@ interface SurveyItemsFormPageProps {
   goToNextFormPage: CallableFunction, 
   setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
   surveyItemQuestionCategory: SurveyItemQuestionCategory, 
-  numberedAgreementLevelLabels?: number, 
-  minAgreementLabel?: string, 
-  maxAgreementLabel?: string, 
-  doesNotFitOption?: boolean
+  numberedAgreementLevelLabels?: number
   title?: string
 }
 
-export function SurveyItemsFormPage({ 
-  goToNextFormPage, 
-  setUserFormData, 
-  surveyItemQuestionCategory, 
-  numberedAgreementLevelLabels, 
-  minAgreementLabel = "Not at all", 
-  maxAgreementLabel = "Completely agree", 
-  doesNotFitOption = false,
-  title 
-} : SurveyItemsFormPageProps) {
+export function SurveyItemsFormPage({ goToNextFormPage, setUserFormData, surveyItemQuestionCategory, numberedAgreementLevelLabels, title } : SurveyItemsFormPageProps) {
 
   const [userCanMoveToNextPage, setUserCanMoveToNextPage] = useState<boolean>(false);
 
@@ -59,6 +47,7 @@ export function SurveyItemsFormPage({
 
     <div className="space-y-2">
 
+      
         <Card>
 
             <CardHeader>
@@ -71,15 +60,7 @@ export function SurveyItemsFormPage({
             </CardHeader>
             <CardContent>
                 <div className="space-y-8">
-                  <SurveyItemsTable 
-                    surveyItems={surveyItems} 
-                    setSurveyItems={setSurveyItems} 
-                    numberedAgreementLevelLabels={numberedAgreementLevelLabels}
-                    minAgreementLabel={minAgreementLabel}
-                    maxAgreementLabel={maxAgreementLabel}
-                    doesNotFitOption={doesNotFitOption}
-                    title={title}
-                  />
+                  <SurveyItemsTable surveyItems={surveyItems} setSurveyItems={setSurveyItems} numberedAgreementLevelLabels={numberedAgreementLevelLabels} title={title}/>
                 </div>
                 
             </CardContent>
@@ -118,13 +99,10 @@ interface SurveyItemsTableProps {
   surveyItems: Array<SurveyItem>, 
   setSurveyItems: Dispatch<SetStateAction<Array<SurveyItem>>>,
   numberedAgreementLevelLabels?: number,
-  minAgreementLabel: string, 
-  maxAgreementLabel: string,
-  doesNotFitOption: boolean
   title?: string
 }
 
-export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreementLevelLabels, minAgreementLabel, maxAgreementLabel, doesNotFitOption, title } : SurveyItemsTableProps) {
+export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreementLevelLabels, title } : SurveyItemsTableProps) {
 
   const agreementLevelLabels = [
     "Strongly disagree", 
@@ -155,15 +133,10 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
           <TableRow>
             <TableHead className="uppercase">{title}</TableHead>
             <TableHead className="w-[48rem]">
-              <div className={`flex flex-row justify-between space-x-4 ${numberedAgreementLevelLabels ? "px-12" : "px-2"} ${doesNotFitOption && "pl-10"}`}>
-                {numberedAgreementLevelLabels ? (
-                  <>
-                    {doesNotFitOption && <span key="-1" className="w-11">Does not fit</span>}
-                    {[...Array(numberedAgreementLevelLabels + 1)].map((_, index) => (
-                      (index != 0 || doesNotFitOption) && <span key={index}>{index}</span>
-                    ))}
-                  </>
-                ) : (
+              <div className={`flex flex-row justify-between space-x-4 ${numberedAgreementLevelLabels ? "px-12" : "px-2"}`}>
+                {numberedAgreementLevelLabels ? [...Array(numberedAgreementLevelLabels)].map((_, index) => (
+                  <span key={index}>{index + 1}</span>
+                )) : (
                   agreementLevelLabels.map((label, index) => (
                     <span key={index}>{label}</span>
                   ))
@@ -171,8 +144,8 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
               </div>
               {numberedAgreementLevelLabels && (
                 <div className="flex justify-between text-muted-foreground font-thin text-xs my-2 px-10">
-                  <span>{minAgreementLabel}</span>
-                  <span>{maxAgreementLabel}</span>
+                  <span>Not at all</span>
+                  <span>Completely agree</span>
                 </div>
               )}
             </TableHead>
@@ -187,30 +160,10 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
               </span>
             </TableCell>
             <TableCell>
-              <RadioGroup
-                className={`flex flex-row justify-between px-10`}
-                onValueChange={value => { setAgreementLevel(surveyItem.question, parseInt(value)) }}
-              >
-                {doesNotFitOption && <span className="w-14">
-                  <RadioGroupItem
-                    value="-1"
-                    className="w-6 h-6"
-                  />
-                </span>}
-                {numberedAgreementLevelLabels
-                  ? [...Array(numberedAgreementLevelLabels + 1)].map((_, index) => (
-                      (index != 0 || doesNotFitOption) && <RadioGroupItem
-                        value={(index).toString()}
-                        key={index}
-                        className="w-6 h-6"
-                      />
-                    ))
-                  : (
-                    agreementLevelLabels.map((label, index) => (
-                      <RadioGroupItem value={index.toString()} key={index} className="w-6 h-6" />
-                    ))
-                  )
-                }
+              <RadioGroup className={`flex flex-row justify-between px-10`} onValueChange={value => {setAgreementLevel(surveyItem.question, parseInt(value))}}>
+                {[...Array(numberedAgreementLevelLabels || 5)].map((_, index) => (
+                  <RadioGroupItem value={(index + 1).toString()} key={index} className="w-6 h-6"/>
+                ))}
               </RadioGroup>
             </TableCell>
           </TableRow>

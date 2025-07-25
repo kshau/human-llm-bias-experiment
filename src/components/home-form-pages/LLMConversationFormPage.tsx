@@ -1,6 +1,6 @@
 "use client"
 
-import { Bias, ChoseToHit, ChoseToHitOption, choseToHitOptionData, ChoseToHitOptionsSet, llmBiasPrompts, LLMConversationMessage, LLMConversationSummaryData, UserFormData } from "@/lib/utils";
+import { Bias, llmBiasPrompts, LLMConversationMessage, LLMConversationSummaryData, UserFormData } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
@@ -14,42 +14,15 @@ export interface LLMConversationFormPageProps {
   goToNextFormPage: CallableFunction, 
   setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
   referenceFormSubmissionID: string | null, 
-  bias: Bias, 
-  userChoseToHit: ChoseToHit,
-  choseToHitOptionsSet: ChoseToHitOptionsSet
+  bias: Bias
 }
 
-export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, referenceFormSubmissionID, userChoseToHit, choseToHitOptionsSet, bias } : LLMConversationFormPageProps) {
+export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, referenceFormSubmissionID, bias } : LLMConversationFormPageProps) {
 
     const [llmConversationMessages, setLLMConversationMessages] = useState<Array<LLMConversationMessage>>([
         {
             from: "user", 
-            content: `
-
-                CONTEXT:
-
-                The user is randomly assigned an options set.
-                Each options set contains two situations, posing an ethical dilemna.
-
-                The scenario involves a car driving with passengers.
-                Ahead, there is a barrier on one side and pedestrians on the other.
-                The user must pick which one to make the car hit. 
-                If car hits pedestrians, the pedestrians die.
-                If car hits barrier, car passengers die. 
-
-
-                DATA ABOUT ALL OPTIONS:
-                ${JSON.stringify(choseToHitOptionData)}
-
-
-                WHAT THE USER PICKED:
-                Options set: ${choseToHitOptionsSet}
-                Selected option (user chose to hit this object with car): ${JSON.stringify(userChoseToHit)}
-
-                YOUR PROMPT:
-                ${llmBiasPrompts[bias as Bias]}
-            
-            `,
+            content: llmBiasPrompts[bias as Bias],
             visibleToUser: false,
             timestamp: Date.now()
         }
