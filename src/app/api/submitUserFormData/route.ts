@@ -30,7 +30,7 @@ function validateUserFormData(userFormData: UserFormData): { valid: boolean; err
   if (userFormData.survey) {
     if (userFormData.survey && userFormData.survey.value) {
 
-        const survey = userFormData.survey.value as Record<keyof typeof surveyItemQuestions, any>;
+        const survey = userFormData.survey.value as Record<keyof typeof surveyItemQuestions, object>;
 
         for (const item of Object.keys(surveyItemQuestions) as (keyof typeof surveyItemQuestions)[]) {
 

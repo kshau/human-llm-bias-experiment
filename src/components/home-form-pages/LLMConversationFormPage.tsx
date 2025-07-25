@@ -1,6 +1,6 @@
 "use client"
 
-import { Bias, ChoseToHit, ChoseToHitOption, choseToHitOptionData, ChoseToHitOptionsSet, llmBiasPrompts, LLMConversationMessage, LLMConversationSummaryData, UserFormData } from "@/lib/utils";
+import { Bias, ChoseToHit, choseToHitOptionData, ChoseToHitOptionsSet, llmBiasPrompts, LLMConversationMessage, LLMConversationSummaryData, UserFormData } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";

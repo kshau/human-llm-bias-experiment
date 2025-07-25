@@ -55,7 +55,7 @@ export function PrimaryTaskIntroFormPage({ goToNextFormPage } : HomeFormPageProp
                     </div>
                     <div className="flex items-center gap-3">
                         <RadioGroupItem value="unsure"/>
-                        <Label>I can't promise one way or the other.</Label>
+                        <Label>{"I can't promise one way or the other."}</Label>
                     </div>
                   </RadioGroup>
                 </div>

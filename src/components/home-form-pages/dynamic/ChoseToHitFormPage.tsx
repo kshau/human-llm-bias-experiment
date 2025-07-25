@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 
 import { ChoseToHitOption, choseToHitOptionData, ChoseToHitOptionsSet, UserFormData } from "@/lib/utils"
-import { Dispatch, ReactNode, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Check, ChevronRight } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"

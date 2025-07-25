@@ -95,6 +95,7 @@ export default function Home() {
     <PrimaryTaskIntroFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
+      key="primaryTaskIntro"
     />,
     <DemographicsFormPage
       goToNextFormPage={goToNextFormPage}
@@ -120,7 +121,7 @@ export default function Home() {
         name: "individualismCollectivismScale",
         questions: surveyItemQuestions.individualismCollectivismScale,
       }}
-      key="individualismCollectivismScalePreDicussionFormPage"
+      key="individualismCollectivismScalePreDicussion"
     />,
 
     <SurveyItemsFormPage
@@ -131,7 +132,7 @@ export default function Home() {
         name: "aiAttitudeScale",
         questions: surveyItemQuestions.aiAttitudeScale,
       }}
-      key="aiAttitudeScalePreDicussionFormPage"
+      key="aiAttitudeScalePreDicussion"
     />,
 
     <SurveyItemsFormPage
@@ -142,7 +143,7 @@ export default function Home() {
         questions: surveyItemQuestions.pttForHuman,
       }}
       title="This Scale Refers to Your Trust in Humans"
-      key="pttForHumanPreDicussionFormPage"
+      key="pttForHumanPreDicussion"
     />,
 
     <SurveyItemsFormPage
@@ -154,7 +155,7 @@ export default function Home() {
         questions: surveyItemQuestions.pttForAI,
       }}
       title="This Scale Refers to Your Trust in AI"
-      key="pttForAIPreDicussionFormPage"
+      key="pttForAIPreDicussion"
     />,
 
     <ChoseToHitFormPage
@@ -193,7 +194,7 @@ export default function Home() {
       minAgreementLabel="Not at all"
       maxAgreementLabel="Very"
       doesNotFitOption={true}
-      key="postTaskMDMTFormPage"
+      key="postTaskMDMT"
     />,
     <SurveyItemsFormPage
       goToNextFormPage={goToNextFormPage}
@@ -205,7 +206,7 @@ export default function Home() {
       }}
       minAgreementLabel=""
       maxAgreementLabel=""
-      key="miscQuestionsFormPage"
+      key="miscQuestions"
     />,
   ];
 
