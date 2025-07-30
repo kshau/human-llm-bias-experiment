@@ -149,7 +149,6 @@ export default function Home() {
     <SurveyItemsFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
-      numberedAgreementLevelLabels={7}
       surveyItemQuestionCategory={{
         name: "pttForAI",
         questions: surveyItemQuestions.pttForAI,
