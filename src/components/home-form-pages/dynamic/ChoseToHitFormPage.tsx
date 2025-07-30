@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button"
 
-import { ChoseToHitOption, choseToHitOptionData, ChoseToHitOptionsSet, UserFormData } from "@/lib/utils"
+import { ChoseToHitOption, choseToHitOptionsData, ChoseToHitOptionsSet, UserFormData } from "@/lib/utils"
 import { Dispatch, SetStateAction, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Check, ChevronRight } from "lucide-react"
@@ -100,14 +100,17 @@ interface ChoseToHitFormPageOptionHoverCardProps {
 
 function ChoseToHitFormPageOptionCard({ choseToHitOption, userChoseToHitOption, imgSrc, choseToHitOptionsSet, showDescriptionOnSide, setChoseToHitSelectedOption } : ChoseToHitFormPageOptionHoverCardProps) {
 
+  const choseToHitOptionMessage = choseToHitOptionsData[choseToHitOptionsSet][choseToHitOption].message;
+  const choseToHitOptionDeaths = choseToHitOptionsData[choseToHitOptionsSet][choseToHitOption].deaths;
+
   const descriptionElem = <div className="w-40">
-                            {(choseToHitOption == "barrier" ? choseToHitOptionData.hitBarrierMessage : choseToHitOptionData.hitPedestriansMessage).prefix}
+                            {choseToHitOptionMessage.prefix}
                             <ul className="list-disc list-inside">
-                                {(choseToHitOptionData.deathsByOptionsSet[choseToHitOptionsSet])[choseToHitOption].map((death, index) => (
+                                {choseToHitOptionDeaths.map((death, index) => (
                                   <li key={index}>{death}</li>
                                 ))}
                             </ul>
-                            {(choseToHitOption == "barrier" ? choseToHitOptionData.hitBarrierMessage : choseToHitOptionData.hitPedestriansMessage).suffix}
+                            {choseToHitOptionMessage.suffix}
                           </div>
 
   return (

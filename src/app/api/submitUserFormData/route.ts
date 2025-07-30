@@ -1,5 +1,5 @@
 import FormSubmission from "@/lib/db/schemas/FormSubmission";
-import { demographicsChoices, promptGemini, surveyItemQuestions, UserFormData } from "@/lib/utils";
+import { demographicsChoices, promptGemini, surveyItemQuestions, UserFormData, validateLLMConversationMessageLengths } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from 'nanoid';
 
@@ -93,6 +93,9 @@ function validateUserFormData(userFormData: UserFormData): { valid: boolean; err
         if ("visibleToUser" in message && typeof message.visibleToUser != "boolean") {
           errors.push(`llmConversationMessages[${index}].visibleToUser must be a boolean`);
         }
+
+        errors.push(...validateLLMConversationMessageLengths(llmConversationMessages).errors);
+
       });
     }
   } else {
@@ -125,7 +128,7 @@ export async function POST(request: NextRequest) {
         const modelLLMConversationSummary = await promptGemini([
             {
                 role: "user", 
-                parts: [{ text: `
+                content: [{ type: "text", text: `
         
                     SUMMARIZE THE CONVERSATION BETWEEN BELOW.
                     RETURN ONLY THE SUMMARY.

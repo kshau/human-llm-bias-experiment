@@ -24,7 +24,7 @@ export function WelcomeFormPage({ goToNextFormPage } : HomeFormPageProps) {
               decisions involving autonomous vehicles with conversational agents. <br/><br/>
               You will be asked to read a scenario, engage in a short discussion with a conversational partner,
               and complete some brief surveys about your views and confidence. <br/><br/>
-              The total study is around 20 minutes.
+              The total study is around 30 minutes.
             </CardContent>
 
         </Card>

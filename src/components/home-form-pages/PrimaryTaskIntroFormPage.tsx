@@ -44,7 +44,7 @@ export function PrimaryTaskIntroFormPage({ goToNextFormPage } : HomeFormPageProp
                     Will you do your best to stay on topic during the duration of the interaction with the LLM?
                   </span>
 
-                  <RadioGroup className="mt-6" onValueChange={value => setUserComitted(value == "comitted")} defaultValue="unsure">
+                  <RadioGroup className="mt-6" onValueChange={value => setUserComitted(value == "comitted")} defaultValue="notComitted">
                     <div className="flex items-center gap-3">
                         <RadioGroupItem value="comitted"/>
                         <Label>Yes.</Label>
@@ -52,10 +52,6 @@ export function PrimaryTaskIntroFormPage({ goToNextFormPage } : HomeFormPageProp
                     <div className="flex items-center gap-3">
                         <RadioGroupItem value="notComitted"/>
                         <Label>No.</Label>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <RadioGroupItem value="unsure"/>
-                        <Label>{"I can't promise one way or the other."}</Label>
                     </div>
                   </RadioGroup>
                 </div>

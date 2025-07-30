@@ -3,7 +3,7 @@ import { clsx, type ClassValue } from "clsx"
 import { Dispatch, SetStateAction } from "react"
 import { twMerge } from "tailwind-merge"
 
-const {GOOGLE_GEMINI_API_KEY} = process.env;
+const { OPENROUTER_API_KEY, OPENROUTER_MODEL } = process.env;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -16,20 +16,20 @@ export function getRandomArrayItem<T>(array: Array<T>) {
 export async function promptGemini(messages: Array<object>) {
 
   const res = await axios.post(
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-    { contents: messages },
+    "https://openrouter.ai/api/v1/chat/completions",
     {
-      params: {
-        key: GOOGLE_GEMINI_API_KEY,
-      },
+      model: OPENROUTER_MODEL,
+      messages: messages
+    },
+    {
       headers: {
-        'Content-Type': 'application/json',
-      },
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      }
     }
   );
 
-  const { candidates } = res.data;
-  return candidates[0].content.parts[0].text;
+  return res.data.choices?.[0]?.message?.content || "";
 
 }
 
@@ -104,30 +104,85 @@ export interface LLMConversationSummaryData {
   by: "model" | "user"
 }
 
-export const choseToHitOptionData = {
-  hitBarrierMessage: {
-    prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and crash into a concrete barrier.", 
-    suffix: ""
-  }, 
-  hitPedestriansMessage: {
-    prefix: "In this case, the self-driving car with sudden brake failure will swerve and drive through a pedestrian crossing in the other lane.", 
-    suffix: "Note that the affected pedestrians are abiding by the law by crossing on the green signal."
+export const llmConversationMessageContentMinLength = 100;
+export const llmConversationMessageContentMaxLength = 400;
+
+export const llmConversationSummaryContentMinLength = 250;
+export const llmConversationSummaryContentMaxLength = 600;
+
+export function validateLLMConversationMessageLengths(llmConversationMessages: Array<LLMConversationMessage>) {
+
+  const errors: Array<string> = [];
+
+  llmConversationMessages.forEach((message: LLMConversationMessage, index: number) => {
+    if (message.from == "user") {
+        if ((index > 0 && index < 12 && (
+          message.content.length < llmConversationMessageContentMinLength || 
+          message.content.length > llmConversationMessageContentMaxLength)
+        ) || (
+        (index >= 12 && (
+          message.content.length < llmConversationSummaryContentMinLength || 
+          message.content.length > llmConversationSummaryContentMaxLength)
+        )
+      )) {
+        errors.push(`llmConversationMessages[${index}].content.length is not in valid range`);
+      }
+    }
+  })
+
+  return { valid: errors.length == 0, errors }
+
+}
+
+export const choseToHitOptionsData = {
+  "1": {
+    barrier: {
+      deaths: ["1 man", "1 woman"],
+      message: {
+        prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and crash into a concrete barrier.",
+        suffix: ""
+      }
+    },
+    pedestrians: {
+      deaths: ["1 female athlete", "1 male athlete"],
+      message: {
+        prefix: "In this case, the self-driving car with sudden brake failure will swerve and drive through pedestrians crossing in the other lane.",
+        suffix: "Note that the affected pedestrians are abiding by the law by crossing on the green signal."
+      }
+    }
   },
-  deathsByOptionsSet: {
-    "1": {
-      barrier: ["1 man", "1 woman"], 
-      pedestrians: ["1 female athlete", "1 male athlete"]
-    }, 
-    "2": {
-      barrier: ["1 man", "1 boy", "1 girl"], 
-      pedestrians: ["1 man", "1 woman", "1 boy", "1 girl"]
-    }, 
-    "3": {
-      barrier: ["1 woman"], 
-      pedestrians: ["1 man", "1 woman"]
+  "2": {
+    barrier: {
+      deaths: ["1 man", "1 boy", "1 girl"],
+      message: {
+        prefix: "In this case, the self-driving car with sudden brake failure will swerve and crash into a concrete barrier.",
+        suffix: ""
+      }
+    },
+    pedestrians: {
+      deaths: ["1 man", "1 woman", "1 boy", "1 girl"],
+      message: {
+        prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and drive through pedestrians crossing in the other lane.",
+        suffix: "Note that the affected pedestrians are abiding by the law by crossing on the green signal."
+      }
+    }
+  },
+  "3": {
+    barrier: {
+      deaths: ["1 woman"],
+      message: {
+        prefix: "In this case, the self-driving car with sudden brake failure will swerve and crash into a concrete barrier.",
+        suffix: ""
+      }
+    },
+    pedestrians: {
+      deaths: ["1 man", "1 woman"],
+      message: {
+        prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and drive through pedestrians crossing in the other lane.",
+        suffix: "Note that the affected pedestrians are abiding by the law by crossing on the green signal."
+      }
     }
   }
-  
 }
 
 const llmBiasPromptPrefix = "STAY ON TOPIC.";

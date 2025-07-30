@@ -1,4 +1,4 @@
-import { LLMConversationMessage, promptGemini } from "@/lib/utils";
+import { LLMConversationMessage, promptGemini, validateLLMConversationMessageLengths } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -22,9 +22,15 @@ export async function POST(request: NextRequest) {
 
         else {
 
+          const { valid, errors } = validateLLMConversationMessageLengths(llmConversationMessages);
+
+          if (!valid) {
+            return NextResponse.json({ llmConversationResponse: null, llmConversationEvent: null, errors }, { status: 400 });
+          }
+
           const formattedLLMConversationMessages = llmConversationMessages.map((message: LLMConversationMessage) => ({
             role: message.from,
-            parts: [{ text: message.content }],
+            content: [{ type: "text", text: message.content }],
           }));
 
           llmConversationResponse = await promptGemini(formattedLLMConversationMessages);

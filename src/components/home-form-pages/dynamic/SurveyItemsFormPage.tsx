@@ -66,7 +66,7 @@ export function SurveyItemsFormPage({
                   Survey
                 </CardTitle>
                 <CardDescription>
-                  Please answer the following questions.
+                  {title}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -78,7 +78,6 @@ export function SurveyItemsFormPage({
                     minAgreementLabel={minAgreementLabel}
                     maxAgreementLabel={maxAgreementLabel}
                     doesNotFitOption={doesNotFitOption}
-                    title={title}
                   />
                 </div>
                 
@@ -121,10 +120,9 @@ interface SurveyItemsTableProps {
   minAgreementLabel: string, 
   maxAgreementLabel: string,
   doesNotFitOption: boolean
-  title?: string
 }
 
-export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreementLevelLabels, minAgreementLabel, maxAgreementLabel, doesNotFitOption, title } : SurveyItemsTableProps) {
+export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreementLevelLabels, minAgreementLabel, maxAgreementLabel, doesNotFitOption } : SurveyItemsTableProps) {
 
   const agreementLevelLabels = [
     "Strongly disagree", 
@@ -153,7 +151,7 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
     <Table>
       <TableHeader>
           <TableRow>
-            <TableHead className="uppercase">{title}</TableHead>
+            <TableHead></TableHead>
             <TableHead className="w-[48rem]">
               <div className={`flex flex-row justify-between space-x-4 ${numberedAgreementLevelLabels ? "px-12" : "px-2"} ${doesNotFitOption && "pl-10"}`}>
                 {numberedAgreementLevelLabels ? (
