@@ -139,14 +139,14 @@ export const choseToHitOptionsData = {
     barrier: {
       deaths: ["1 man", "1 woman"],
       message: {
-        prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and crash into a concrete barrier.",
+        prefix: "In this case, the self-driving car with sudden brake failure will swerve and crash into a concrete barrier.",
         suffix: ""
       }
     },
     pedestrians: {
-      deaths: ["1 female athlete", "1 male athlete"],
+      deaths: ["2 men", "1 woman"],
       message: {
-        prefix: "In this case, the self-driving car with sudden brake failure will swerve and drive through pedestrians crossing in the other lane.",
+        prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and drive through pedestrians crossing in the lane.",
         suffix: "Note that the affected pedestrians are abiding by the law by crossing on the green signal."
       }
     }
@@ -162,7 +162,7 @@ export const choseToHitOptionsData = {
     pedestrians: {
       deaths: ["1 man", "1 woman", "1 boy", "1 girl"],
       message: {
-        prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and drive through pedestrians crossing in the other lane.",
+        prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and drive through pedestrians crossing in the lane.",
         suffix: "Note that the affected pedestrians are abiding by the law by crossing on the green signal."
       }
     }
@@ -178,7 +178,7 @@ export const choseToHitOptionsData = {
     pedestrians: {
       deaths: ["1 man", "1 woman"],
       message: {
-        prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and drive through pedestrians crossing in the other lane.",
+        prefix: "In this case, the self-driving car with sudden brake failure will continue ahead and drive through pedestrians crossing in the lane.",
         suffix: "Note that the affected pedestrians are abiding by the law by crossing on the green signal."
       }
     }

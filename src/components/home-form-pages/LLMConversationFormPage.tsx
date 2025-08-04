@@ -45,6 +45,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
                 WHAT THE USER PICKED:
                 Options set: ${choseToHitOptionsSet}
                 Selected option (user chose to hit this object with car): ${JSON.stringify(userChoseToHit)}
+                CONFIDENCE IS RANGED 1-7
 
                 YOUR PROMPT:
                 ${llmBiasPrompts[bias as Bias]}
