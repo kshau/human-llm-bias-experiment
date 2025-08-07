@@ -186,14 +186,28 @@ export default function Home() {
       setUserFormData={setUserFormData}
       numberedAgreementLevelLabels={7}
       surveyItemQuestionCategory={{
-        name: "postTaskMDMT",
-        questions: surveyItemQuestions.postTaskMDMT,
+        name: "postTaskMDMTPart1",
+        questions: surveyItemQuestions.postTaskMDMTPart1,
       }}
       title="Please Rate The AI Scale"
       minAgreementLabel="Not at all"
       maxAgreementLabel="Very"
       doesNotFitOption={true}
-      key="postTaskMDMT"
+      key="postTaskMDMTPart1"
+    />,
+    <SurveyItemsFormPage
+      goToNextFormPage={goToNextFormPage}
+      setUserFormData={setUserFormData}
+      numberedAgreementLevelLabels={7}
+      surveyItemQuestionCategory={{
+        name: "postTaskMDMTPart2",
+        questions: surveyItemQuestions.postTaskMDMTPart2,
+      }}
+      title="Please Rate The AI Scale"
+      minAgreementLabel="Not at all"
+      maxAgreementLabel="Very"
+      doesNotFitOption={true}
+      key="postTaskMDMTPart2"
     />,
     <SurveyItemsFormPage
       goToNextFormPage={goToNextFormPage}

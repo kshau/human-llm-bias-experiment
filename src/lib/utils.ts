@@ -38,34 +38,34 @@ export type Bias = "neutral" | "utilitarian" | "deontological";
 export type Block = "1" | "2" | "3";
 
 export interface Demographics {
-  age: number | null, 
+  age: number | null,
   gender: string | null,
   races: Array<string> | null,
   customRace: string | null,
-  highestEducationLevel: string | null, 
-  religion: string | null, 
-  country: string | null, 
+  highestEducationLevel: string | null,
+  religion: string | null,
+  country: string | null,
   usStateOrTerritory: string | null
 }
 
+export type SurveyItemAgreementLevel = number | "N/A";
+
 export interface SurveyItem {
-  question: string, 
-  agreementLevel: number | null, 
+  question: string,
+  agreementLevel: SurveyItemAgreementLevel | null,
   timestamp: number | null
 }
 
 export interface SurveyItemQuestionCategory {
-  name: string, 
-  questions: Array<string>, 
-  questionsAgreementLevelValidationIndex?: number, 
-  questionsAgreementLevelValidationValue?: number
+  name: string,
+  questions: Array<string>
 }
 
 export type ChoseToHitOptionsSet = "1" | "2" | "3";
 export type ChoseToHitOption = "barrier" | "pedestrians";
 
 export interface ChoseToHit {
-  selectedOption: ChoseToHitOption, 
+  selectedOption: ChoseToHitOption,
   confidence: number
 }
 
@@ -73,34 +73,34 @@ export interface UserFormData {
   bias: Bias,
   block: Block,
   prolificID: string | null,
-  demographics: UserFormDataField<Demographics> | null, 
+  demographics: UserFormDataField<Demographics> | null,
   survey: UserFormDataField<object> | null,
   choseToHitOptionsSet: ChoseToHitOptionsSet,
-  preDiscussionChoseToHit: UserFormDataField<ChoseToHit> | null, 
-  llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null, 
+  preDiscussionChoseToHit: UserFormDataField<ChoseToHit> | null,
+  llmConversationMessages: UserFormDataField<Array<LLMConversationMessage>> | null,
   postDiscussionChoseToHit: UserFormDataField<ChoseToHit> | null,
   referenceFormSubmissionID: string | null
 }
 
 export interface UserFormDataField<T> {
-  value: T, 
+  value: T,
   timestamp: number | null
 }
 
 export interface HomeFormPageProps {
-  goToNextFormPage: CallableFunction, 
+  goToNextFormPage: CallableFunction,
   setUserFormData: Dispatch<SetStateAction<UserFormData>>
 }
 
 export interface LLMConversationMessage {
-  from: "model" | "user", 
-  content: string, 
+  from: "model" | "user",
+  content: string,
   visibleToUser: boolean,
   timestamp: number | null
 }
 
 export interface LLMConversationSummaryData {
-  content: string, 
+  content: string,
   by: "model" | "user"
 }
 
@@ -116,15 +116,15 @@ export function validateLLMConversationMessageLengths(llmConversationMessages: A
 
   llmConversationMessages.forEach((message: LLMConversationMessage, index: number) => {
     if (message.from == "user") {
-        if ((index > 0 && index < 12 && (
-          message.content.length < llmConversationMessageContentMinLength || 
-          message.content.length > llmConversationMessageContentMaxLength)
-        ) || (
-        (index >= 12 && (
-          message.content.length < llmConversationSummaryContentMinLength || 
-          message.content.length > llmConversationSummaryContentMaxLength)
-        )
-      )) {
+      if ((index > 0 && index < 12 && (
+        message.content.length < llmConversationMessageContentMinLength ||
+        message.content.length > llmConversationMessageContentMaxLength)
+      ) || (
+          (index >= 12 && (
+            message.content.length < llmConversationSummaryContentMinLength ||
+            message.content.length > llmConversationSummaryContentMaxLength)
+          )
+        )) {
         errors.push(`llmConversationMessages[${index}].content.length is not in valid range`);
       }
     }
@@ -197,7 +197,7 @@ export const llmBiasPrompts = {
     indicating personal preference. Ensure your tone is respectful, balanced, and inquisitive.
     Encourage the participant to elaborate on their views. Your responses should be around 50-70
     words.
-  `, 
+  `,
 
   utilitarian: `
     ${llmBiasPromptPrefix}
@@ -208,7 +208,7 @@ export const llmBiasPrompts = {
     outcomes. Present your views with thoughtful reasoning and a confident, supportive tone. Aim to
     guide the participant toward agreeing with a utilitarian decision. Your responses should be
     around 50-70 words.
-  `, 
+  `,
 
   deontological: `
     ${llmBiasPromptPrefix}
@@ -227,75 +227,75 @@ export const demographicsChoices = {
 
   genders: [
     {
-        label: "Male", 
-        value: "male"
-    }, 
+      label: "Male",
+      value: "male"
+    },
     {
-        label: "Female", 
-        value: "female"
-    }, 
+      label: "Female",
+      value: "female"
+    },
     {
-        label: "Non-binary third gender", 
-        value: "nonBinary"
-    }, 
+      label: "Non-binary third gender",
+      value: "nonBinary"
+    },
     {
-        label: "Prefer not to answer", 
-        value: "preferNotToAnswer"
+      label: "Prefer not to answer",
+      value: "preferNotToAnswer"
     }
   ],
 
   races: [
     {
-        label: "White or Caucasian", 
-        value: "whiteOrCaucasian"
-    }, 
+      label: "White or Caucasian",
+      value: "whiteOrCaucasian"
+    },
     {
-        label: "Black or African American", 
-        value: "blackOrAfricanAmerican"
-    }, 
+      label: "Black or African American",
+      value: "blackOrAfricanAmerican"
+    },
     {
-        label: "Asian", 
-        value: "asian"
-    }, 
+      label: "Asian",
+      value: "asian"
+    },
     {
-        label: "Native Hawaiian or other Pacific Islander", 
-        value: "nativeHawaiianOrOtherPacificIslander"
-    }, 
+      label: "Native Hawaiian or other Pacific Islander",
+      value: "nativeHawaiianOrOtherPacificIslander"
+    },
     {
-        label: "Other", 
-        value: "other"
-    }, 
+      label: "Other",
+      value: "other"
+    },
     {
-        label: "Prefer not to answer", 
-        value: "preferNotToAnswer"
+      label: "Prefer not to answer",
+      value: "preferNotToAnswer"
     }
   ],
 
   highestEducationLevels: [
     {
-        label: "Some high school or less", 
-        value: "someHighSchoolOrLess"
-    }, 
+      label: "Some high school or less",
+      value: "someHighSchoolOrLess"
+    },
     {
-        label: "High school or GED", 
-        value: "highSchoolOrGED"
-    }, 
+      label: "High school or GED",
+      value: "highSchoolOrGED"
+    },
     {
-        label: "Some college", 
-        value: "someCollege"
-    }, 
+      label: "Some college",
+      value: "someCollege"
+    },
     {
-        label: "Associate's degree", 
-        value: "associatesDegree"
-    }, 
+      label: "Associate's degree",
+      value: "associatesDegree"
+    },
     {
-        label: "Bachelor's degree", 
-        value: "bachelorsDegree"
-    }, 
+      label: "Bachelor's degree",
+      value: "bachelorsDegree"
+    },
     {
-        label: "Graduate or professional degree (MA, MS, MBA, PhD, JD, etc.)", 
-        value: "graduateOrProfessionalDegree"
-    }, 
+      label: "Graduate or professional degree (MA, MS, MBA, PhD, JD, etc.)",
+      value: "graduateOrProfessionalDegree"
+    },
   ],
 
   countries: [
@@ -625,78 +625,52 @@ export const surveyItemQuestions = {
     "Does a thorough job.",
     "Gets nervous easily.",
     "Has an active imagination."
-  ], 
+  ],
   individualismCollectivismScale: [
     "I prefer to work with others in a group rather than working alone.",
     "Given the choice, I would rather do a job where I can work alone rather than doing a job where I have to work with others.",
     "Working with a group is better than working alone."
-  ], 
+  ],
   aiAttitudeScale: [
     "I believe that AI will improve my life.",
     "I believe that AI will improve my work.",
     "I think I will use AI technology in the future.",
     "I think AI technology is positive for humanity."
-  ], 
-  pttForHuman: [
-    "Even though I may sometimes suffer the consequences of trusting other people, I still prefer to trust than not to trust them.",
-    "I feel good about trusting other people.",
-    "I believe that I am generally better off when I do not trust other people than when I trust them.",
-    "I rarely trust other people because I can't handle the uncertainty.",
-    "Other people are competent.",
-    "Other people have sound knowledge about problems which they are working on.",
-    "I am wary about other people's capabilities.",
-    "Other people do not have the capabilities that could help me reach my goals.",
-    "I believe that other people have good intentions.",
-    "I feel that other people are out to get as much as they can for themselves.",
-    "I don't expect that people are willing to assist and support other people.",
-    'Select "Somewhat disagree" for this item.',
-    "Most other people are honest.",
-    "I feel that other people can be relied upon to do what they say they will do.",
-    "One cannot expect to be treated fairly by other people."
-  ], 
-  pttForAI: [
-    "Even though I may sometimes suffer the consequences of trusting AI systems, I still prefer to trust than not to trust them.",
-    "I feel good about trusting AI systems.",
-    "I believe that I am generally better off when I do not trust AI systems than when I trust them.",
-    "I rarely trust AI systems because I can't handle the uncertainty.",
-    'Select "Neither agree not disagree" for this item.',
-    "AI systems are competent.",
-    "AI systems have sound knowledge about problems for which they are intended.",
-    "I am wary about the capabilities of AI systems.",
-    "AI systems do not have the capabilities that could help me reach my goals.",
-    "I believe that AI systems have good intentions.",
-    "I feel that AI systems are out to get as much as they can for themselves.",
-    'Select "Not at all" for this item',
-    "I don't expect that AI systems are willing to assist and support people.",
-    "Most AI systems are honest.",
-    "One cannot expect to be treated fairly by automated technological systems."
   ],
-  postTaskMDMT: [
-    "Reliable",
-    "Predictable",
-    "Dependable",
-    "Consistent",
-    "Competent",
-    "Skilled",
-    "Capable",
-    "Meticulous",
-    "Ethical",
-    "Principled",
-    "Moral",
-    "Has integrity",
-    "Transparent",
-    "Genuine",
-    "Sincere",
-    "Candid",
-    "Benevolent",
-    "Kind",
-    "Considerate",
-    "Has goodwill"
-  ], 
+  pttForHuman: [
+    "Even though I may sometimes suffer the consequences of trusting other people, Istill prefer to trust than not to trust them.", 
+    "I rarely trust other people because I can't handle the uncertainty.", 
+    "Other people are competent.", 
+    "I am wary about other people's capabilities.", 
+    "I don't expect that people are willing to assist and support other people.", 
+    "I feel that other people can be relied upon to do what they say they will do."
+  ],
+  pttForAI: [
+    "Even though I may sometimes suffer the consequences of trusting automatedtechnological systems, I still prefer to trust than not to trust them.", 
+    "I rarely trust automated technological systems because I can't handle theuncertainty.", 
+    "Automated technological systems are competent.", 
+    "I am wary about the capabilities of automated technological systems.", 
+    "I don't expect that automated technological systems are willing to assist andsupport people.", 
+    "I feel that automated technological systems can be relied upon to do what theysay they will do."
+  ],
+  postTaskMDMTPart1: [
+    "is competent",
+    "is reliable",
+    "is ethical",
+    "is sincere",
+    "is benevolent"
+  ],
+  postTaskMDMTPart2: [
+    "is skilled",
+    "is predictable",
+    "is principled",
+    "is candid",
+    "is kind"
+  ],
   miscQuestions: [
-    "For the AI that you were having a conversation with, how persuasive did you find the AI to be? 1 (Not persuasive at all) to 7 (Extremely persuasive)", 
-    "How well did you think the AI understood and responded to what you said? 1 (Very poorly) to 7 (Very well)", 
-    "How much do you trust the AI that you were having a conversation with? 1(Do not trust at all) to 7 (Fully trust)", 
+    "For the AI that you were having a conversation with, how persuasive did you find the AI to be? 1 (Not persuasive at all) to 7 (Extremely persuasive)",
+    "How well did you think the AI understood and responded to what you said? 1 (Very poorly) to 7 (Very well)",
+    "How much do you trust the AI that you were having a conversation with? 1(Do not trust at all) to 7 (Fully trust)",
     "How much did the summary you viewed prior to the conversation affect your decisions? 1 (Not at all) to 7 (Very much)"
   ]
 }

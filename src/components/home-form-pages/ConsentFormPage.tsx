@@ -33,13 +33,13 @@ export function ConsentFormPage({ goToNextFormPage } : HomeFormPageProps) {
             <CardContent>
 
                 <iframe
-                    src="/assets/consent.pdf"
+                    src="/assets/consent-form.pdf"
                     width="600"
                     height="800"
                     className="mb-2"
                 />
 
-                <Link href="/assets/consent.pdf" target="_blank">
+                <Link href="/assets/consent-form.pdf" target="_blank">
                     <Button variant="secondary" className="hover:cursor-pointer">
                         <SquareArrowOutUpRightIcon/>
                         Open in new tab

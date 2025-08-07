@@ -56,8 +56,7 @@ function validateUserFormData(userFormData: UserFormData): { valid: boolean; err
                     errors.push(`Survey category '${index}' question mismatch at index ${index}`);
                 }
                 if (
-                    typeof userQuestion.agreementLevel != "number" ||
-                    !Number.isInteger(userQuestion.agreementLevel)
+                    userQuestion.agreementLevel == null
                 ) {
                     errors.push(`Survey item '${index}' agreementLevel at index ${index} is not an integer`);
                 }

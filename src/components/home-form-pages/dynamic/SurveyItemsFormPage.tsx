@@ -132,7 +132,7 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
     "Strongly agree"
   ]
 
-  const setAgreementLevel = (question: string, agreementLevel: number) => {
+  const setAgreementLevel = (question: string, agreementLevel: number | "N/A") => {
 
     const newSurveyItems = [...surveyItems];
 
@@ -156,7 +156,7 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
               <div className={`flex flex-row justify-between space-x-4 ${numberedAgreementLevelLabels ? "px-12" : "px-2"} ${doesNotFitOption && "pl-10"}`}>
                 {numberedAgreementLevelLabels ? (
                   <>
-                    {doesNotFitOption && <span key="-1" className="w-11">Does not fit</span>}
+                    {doesNotFitOption && <span className="w-11">Does not fit</span>}
                     {[...Array(numberedAgreementLevelLabels + 1)].map((_, index) => (
                       (index != 0 || doesNotFitOption) && <span key={index}>{index}</span>
                     ))}
@@ -187,12 +187,12 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
             <TableCell>
               <RadioGroup
                 className={`flex flex-row justify-between px-10`}
-                onValueChange={value => { setAgreementLevel(surveyItem.question, parseInt(value)) }}
+                onValueChange={value => { setAgreementLevel(surveyItem.question, parseInt(value) == -1 ? "N/A" : parseInt(value)) }}
               >
                 {doesNotFitOption && <span className="w-14">
                   <RadioGroupItem
                     value="-1"
-                    className="w-6 h-6"
+                    className="w-6 h-6 self-center"
                   />
                 </span>}
                 {numberedAgreementLevelLabels
