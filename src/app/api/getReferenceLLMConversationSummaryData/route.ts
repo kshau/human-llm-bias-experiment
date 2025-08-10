@@ -9,25 +9,26 @@ export async function POST(request: NextRequest) {
 
         const { referenceFormSubmissionID } = await request.json();
 
-        const referenceFormSubmissionDoc = await FormSubmission.findOne({ id: referenceFormSubmissionID });;
-        let summarizeReferenceLLMConversationBy;
+        const referenceFormSubmissionDoc = await FormSubmission.findOne({ id: referenceFormSubmissionID });
 
         if (!referenceFormSubmissionDoc) {
             return NextResponse.json({ referenceLLMConversationSummaryData: null }, { status: 200 });
         }
 
-        switch (referenceFormSubmissionDoc.block) {
+        let summarizeReferenceLLMConversationBy;
 
-            case "1":
-                summarizeReferenceLLMConversationBy = getRandomArrayItem(["user", "model"]);
-                break;
-            case "2":
-                summarizeReferenceLLMConversationBy = referenceFormSubmissionDoc.llmConversationSummarizedBy[0] == "user" ? "model" : "user";
-                break;
+        if (referenceFormSubmissionDoc.block == "1") {
+
+            summarizeReferenceLLMConversationBy = getRandomArrayItem(["user", "model"]);
 
         }
 
-        referenceFormSubmissionDoc.llmConversationSummarizedBy.push(summarizeReferenceLLMConversationBy);
+        else {
+            const block1FormSubmissionDoc = await FormSubmission.findOne({ id: referenceFormSubmissionDoc.referenceFormSubmissionID });
+            summarizeReferenceLLMConversationBy = block1FormSubmissionDoc.llmConversationSummarizedBy;
+        }
+
+        referenceFormSubmissionDoc.llmConversationSummarizedBy = summarizeReferenceLLMConversationBy;
         await referenceFormSubmissionDoc.save();
 
         const selectedFormSubmissionLLMConversationMessages = referenceFormSubmissionDoc.llmConversationMessages.value;

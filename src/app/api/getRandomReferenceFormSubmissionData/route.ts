@@ -13,16 +13,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });
         }
 
-        let formSubmissionCandidateDocs = [];
-
-        switch (block) {
-            case "2":
-                formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: "1", isReferenced: false });
-                break;
-            case "3":
-                formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: "2", isReferenced: false, llmConversationSummarizedBy: { $size: 1 } });
-                break;
-        }
+        const formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: block == "2" ? "1" : "2", isReferenced: false });
 
         if (formSubmissionCandidateDocs.length <= 0) {
             return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });

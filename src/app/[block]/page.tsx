@@ -44,20 +44,6 @@ export default function Home() {
     referenceFormSubmissionID: null
   });
 
-  const getRandomReferenceFormSubmissionID = async () => {
-
-    const res = await axios.post("/api/getRandomReferenceFormSubmissionData", { bias: userFormData.bias, block: userFormData.block });
-
-    if (res.data.referenceFormSubmissionID) {
-      setUserFormData(o => ({
-      ...o, 
-        choseToHitOptionsSet: res.data.referenceFormSubmissionChoseToHitOptionsSet, 
-        referenceFormSubmissionID: res.data.referenceFormSubmissionID
-      }))
-    }
-    
-  }
-
   const goToNextFormPage = () => {
 
     if (currentFormPageIndex >= formPages.length - 1) {
@@ -71,10 +57,6 @@ export default function Home() {
   const submitUserFormData = async () => {
     await axios.post("/api/submitUserFormData", { userFormData });
   }
-
-  useEffect(() => {
-    getRandomReferenceFormSubmissionID();
-  }, [])
 
   const formPages = [
     <ConsentFormPage
@@ -100,6 +82,7 @@ export default function Home() {
     <DemographicsFormPage
       goToNextFormPage={goToNextFormPage}
       setUserFormData={setUserFormData}
+      userFormData={userFormData}
       key="demographics"
     />,
 
@@ -215,7 +198,7 @@ export default function Home() {
       numberedAgreementLevelLabels={7}
       surveyItemQuestionCategory={{
         name: "miscQuestions",
-        questions: surveyItemQuestions.miscQuestions,
+        questions: userFormData.block == "1" ? surveyItemQuestions.miscQuestions.slice(0, -1) : surveyItemQuestions.miscQuestions,
       }}
       minAgreementLabel=""
       maxAgreementLabel=""

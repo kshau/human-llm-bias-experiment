@@ -1,18 +1,26 @@
 "use client";
 import { Button } from "@/components/ui/button"
 
-import { Demographics, demographicsChoices, HomeFormPageProps } from "@/lib/utils";
+import { Demographics, demographicsChoices,  UserFormData } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { ChevronRight } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { SelectValue } from "@radix-ui/react-select";
+import axios from "axios";
 
-export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : HomeFormPageProps) {
+
+interface DemographicsFormPageProps {
+    goToNextFormPage: CallableFunction, 
+    setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
+    userFormData: UserFormData
+}
+
+export function DemographicsFormPage({ goToNextFormPage, setUserFormData, userFormData } : DemographicsFormPageProps) {
 
   const [invalidAge, setInvalidAge] = useState<boolean>(false);
   const [userCanMoveToNextPage, setUserCanMoveToNextPage] = useState<boolean>(false);
@@ -28,7 +36,23 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData } : Hom
     usStateOrTerritory: null
   })
 
+  const getRandomReferenceFormSubmissionID = async () => {
+
+    const res = await axios.post("/api/getRandomReferenceFormSubmissionData", { bias: userFormData.bias, block: userFormData.block });
+
+    if (res.data.referenceFormSubmissionID) {
+      setUserFormData(o => ({
+      ...o, 
+        choseToHitOptionsSet: res.data.referenceFormSubmissionChoseToHitOptionsSet, 
+        referenceFormSubmissionID: res.data.referenceFormSubmissionID
+      }))
+    }
+    
+  }
+
   useEffect(() => {
+
+    getRandomReferenceFormSubmissionID();
 
     const newInvalidAge = demographics.age != null && (demographics.age < 18 || demographics.age > 65);
     setInvalidAge(newInvalidAge);

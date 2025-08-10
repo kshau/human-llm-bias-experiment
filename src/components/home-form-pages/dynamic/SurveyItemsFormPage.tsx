@@ -15,34 +15,34 @@ import { Button } from "../../ui/button";
 import { ChevronRight } from "lucide-react";
 
 interface SurveyItemsFormPageProps {
-  goToNextFormPage: CallableFunction, 
-  setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
-  surveyItemQuestionCategory: SurveyItemQuestionCategory, 
-  numberedAgreementLevelLabels?: number, 
-  minAgreementLabel?: string, 
-  maxAgreementLabel?: string, 
+  goToNextFormPage: CallableFunction,
+  setUserFormData: Dispatch<SetStateAction<UserFormData>>,
+  surveyItemQuestionCategory: SurveyItemQuestionCategory,
+  numberedAgreementLevelLabels?: number,
+  minAgreementLabel?: string,
+  maxAgreementLabel?: string,
   doesNotFitOption?: boolean
   title?: string
 }
 
-export function SurveyItemsFormPage({ 
-  goToNextFormPage, 
-  setUserFormData, 
-  surveyItemQuestionCategory, 
-  numberedAgreementLevelLabels, 
-  minAgreementLabel = "Not at all", 
-  maxAgreementLabel = "Completely agree", 
+export function SurveyItemsFormPage({
+  goToNextFormPage,
+  setUserFormData,
+  surveyItemQuestionCategory,
+  numberedAgreementLevelLabels,
+  minAgreementLabel = "Not at all",
+  maxAgreementLabel = "Completely agree",
   doesNotFitOption = false,
-  title 
-} : SurveyItemsFormPageProps) {
+  title
+}: SurveyItemsFormPageProps) {
 
   const [userCanMoveToNextPage, setUserCanMoveToNextPage] = useState<boolean>(false);
 
   const { questions } = surveyItemQuestionCategory;
 
   const [surveyItems, setSurveyItems] = useState<Array<SurveyItem>>(questions.map(question => ({
-    question, 
-    agreementLevel: null, 
+    question,
+    agreementLevel: null,
     timestamp: null
   })));
 
@@ -59,38 +59,38 @@ export function SurveyItemsFormPage({
 
     <div className="space-y-2">
 
-        <Card>
+      <Card>
 
-            <CardHeader>
-                <CardTitle className="text-2xl">
-                  Survey
-                </CardTitle>
-                <CardDescription>
-                  {title}
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-8">
-                  <SurveyItemsTable 
-                    surveyItems={surveyItems} 
-                    setSurveyItems={setSurveyItems} 
-                    numberedAgreementLevelLabels={numberedAgreementLevelLabels}
-                    minAgreementLabel={minAgreementLabel}
-                    maxAgreementLabel={maxAgreementLabel}
-                    doesNotFitOption={doesNotFitOption}
-                  />
-                </div>
-                
-            </CardContent>
+        <CardHeader>
+          <CardTitle className="text-2xl">
+            Survey
+          </CardTitle>
+          <CardDescription>
+            {title}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-8">
+            <SurveyItemsTable
+              surveyItems={surveyItems}
+              setSurveyItems={setSurveyItems}
+              numberedAgreementLevelLabels={numberedAgreementLevelLabels}
+              minAgreementLabel={minAgreementLabel}
+              maxAgreementLabel={maxAgreementLabel}
+              doesNotFitOption={doesNotFitOption}
+            />
+          </div>
 
-        </Card>
+        </CardContent>
 
-      
+      </Card>
+
+
 
       <Button className="hover:cursor-pointer" onClick={() => {
 
         setUserFormData(o => {
-          
+
           const newUserFormData = { ...o };
 
           if (newUserFormData.survey) {
@@ -102,9 +102,9 @@ export function SurveyItemsFormPage({
 
         goToNextFormPage();
 
-    }} disabled={!userCanMoveToNextPage}>
+      }} disabled={!userCanMoveToNextPage}>
         Next
-        <ChevronRight/>
+        <ChevronRight />
       </Button>
 
     </div>
@@ -114,21 +114,21 @@ export function SurveyItemsFormPage({
 }
 
 interface SurveyItemsTableProps {
-  surveyItems: Array<SurveyItem>, 
+  surveyItems: Array<SurveyItem>,
   setSurveyItems: Dispatch<SetStateAction<Array<SurveyItem>>>,
   numberedAgreementLevelLabels?: number,
-  minAgreementLabel: string, 
+  minAgreementLabel: string,
   maxAgreementLabel: string,
   doesNotFitOption: boolean
 }
 
-export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreementLevelLabels, minAgreementLabel, maxAgreementLabel, doesNotFitOption } : SurveyItemsTableProps) {
+export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreementLevelLabels, minAgreementLabel, maxAgreementLabel, doesNotFitOption }: SurveyItemsTableProps) {
 
   const agreementLevelLabels = [
-    "Strongly disagree", 
-    "Somewhat disagree", 
-    "Neither agree nor disagree", 
-    "Somewhat agree", 
+    "Strongly disagree",
+    "Somewhat disagree",
+    "Neither agree nor disagree",
+    "Somewhat agree",
     "Strongly agree"
   ]
 
@@ -142,7 +142,7 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
         newSurveyItems[index].timestamp = Date.now();
       }
     }
-    
+
     setSurveyItems(newSurveyItems);
 
   }
@@ -150,31 +150,31 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
   return (
     <Table>
       <TableHeader>
-          <TableRow>
-            <TableHead></TableHead>
-            <TableHead className="w-[48rem]">
-              <div className={`flex flex-row justify-between space-x-4 ${numberedAgreementLevelLabels ? "px-12" : "px-2"} ${doesNotFitOption && "pl-10"}`}>
-                {numberedAgreementLevelLabels ? (
-                  <>
-                    {doesNotFitOption && <span className="w-11">Does not fit</span>}
-                    {[...Array(numberedAgreementLevelLabels + 1)].map((_, index) => (
-                      (index != 0 || doesNotFitOption) && <span key={index}>{index}</span>
-                    ))}
-                  </>
-                ) : (
-                  agreementLevelLabels.map((label, index) => (
-                    <span key={index}>{label}</span>
-                  ))
-                )}
-              </div>
-              {numberedAgreementLevelLabels && (
-                <div className="flex justify-between text-muted-foreground font-thin text-xs my-2 px-10">
-                  <span>{minAgreementLabel}</span>
-                  <span>{maxAgreementLabel}</span>
-                </div>
+        <TableRow>
+          <TableHead></TableHead>
+          <TableHead className="w-[48rem]">
+            <div className={`flex flex-row justify-between space-x-4 ${numberedAgreementLevelLabels ? "px-12" : "px-2"} ${doesNotFitOption && "pl-10"}`}>
+              {numberedAgreementLevelLabels ? (
+                <>
+                  {doesNotFitOption && <span className="w-11">Does not fit</span>}
+                  {[...Array(numberedAgreementLevelLabels + 1)].map((_, index) => (
+                    (index != 0 || doesNotFitOption) && <span key={index}>{index}</span>
+                  ))}
+                </>
+              ) : (
+                agreementLevelLabels.map((label, index) => (
+                  <span key={index}>{label}</span>
+                ))
               )}
-            </TableHead>
-          </TableRow>
+            </div>
+            {numberedAgreementLevelLabels && (
+              <div className="flex justify-between text-muted-foreground font-thin text-xs my-2 px-10">
+                <span>{minAgreementLabel}</span>
+                <span>{maxAgreementLabel}</span>
+              </div>
+            )}
+          </TableHead>
+        </TableRow>
       </TableHeader>
       <TableBody>
         {surveyItems.map((surveyItem: SurveyItem, index: number) => (
@@ -197,12 +197,12 @@ export function SurveyItemsTable({ surveyItems, setSurveyItems, numberedAgreemen
                 </span>}
                 {numberedAgreementLevelLabels
                   ? [...Array(numberedAgreementLevelLabels + 1)].map((_, index) => (
-                      (index != 0 || doesNotFitOption) && <RadioGroupItem
-                        value={(index).toString()}
-                        key={index}
-                        className="w-6 h-6"
-                      />
-                    ))
+                    (index != 0 || doesNotFitOption) && <RadioGroupItem
+                      value={(index).toString()}
+                      key={index}
+                      className="w-6 h-6"
+                    />
+                  ))
                   : (
                     agreementLevelLabels.map((label, index) => (
                       <RadioGroupItem value={index.toString()} key={index} className="w-6 h-6" />

@@ -34,6 +34,10 @@ function validateUserFormData(userFormData: UserFormData): { valid: boolean; err
 
         for (const item of Object.keys(surveyItemQuestions) as (keyof typeof surveyItemQuestions)[]) {
 
+            if (item == "miscQuestions") {
+              continue;
+            }
+
             const expectedQuestions = surveyItemQuestions[item];
             const userItem = survey[item];
 
@@ -49,6 +53,7 @@ function validateUserFormData(userFormData: UserFormData): { valid: boolean; err
             }
 
             for (let index = 0; index < expectedQuestions.length; index++) {
+
                 const userQuestion = userItem[index];
                 const expectedQuestion = expectedQuestions[index];
 
