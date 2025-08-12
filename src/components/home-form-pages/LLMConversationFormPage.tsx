@@ -43,7 +43,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
 
 
                 WHAT THE USER PICKED:
-                Options set: ${choseToHitOptionsSet}
+                Options set: ${choseToHitOptionsSet} (DO NOT MENTION THE OPTIONS SET WHEN DISCUSSING THE SCENARIO)
                 Selected option (user chose to hit this object with car): ${JSON.stringify(userChoseToHit)}
                 CONFIDENCE IS RANGED 1-7
 
