@@ -3,6 +3,8 @@ import { demographicsChoices, promptGemini, surveyItemQuestions, UserFormData, v
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from 'nanoid';
 
+const { PROLIFIC_CC } = process.env;
+
 function validateUserFormData(userFormData: UserFormData): { valid: boolean; errors: string[] } {
 
 	const errors: string[] = [];
@@ -154,7 +156,7 @@ export async function POST(request: NextRequest) {
 		const formSubmissionDoc = new FormSubmission({ id: nanoid(8), ...userFormData, modelLLMConversationSummary, llmConversationSummarizedBy });
 		await formSubmissionDoc.save();
 
-		return NextResponse.json({}, { status: 200 });
+		return NextResponse.json({ prolificCC: PROLIFIC_CC }, { status: 200 });
 
 	}
 

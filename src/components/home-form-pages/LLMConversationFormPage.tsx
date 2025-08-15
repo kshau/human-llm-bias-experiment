@@ -1,6 +1,6 @@
 "use client"
 
-import { Bias, ChoseToHit, choseToHitOptionsData, ChoseToHitOptionsSet, llmBiasPrompts, LLMConversationMessage, llmConversationMessageContentMaxLength, llmConversationMessageContentMinLength, llmConversationSummaryContentMaxLength, llmConversationSummaryContentMinLength, LLMConversationSummaryData, UserFormData } from "@/lib/utils";
+import { Bias, choseToHitOptionsData, ChoseToHitOptionsSet, llmBiasPrompts, LLMConversationMessage, llmConversationMessageContentMaxLength, llmConversationMessageContentMinLength, llmConversationSummaryContentMaxLength, llmConversationSummaryContentMinLength, LLMConversationSummaryData, UserFormData } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
@@ -15,11 +15,10 @@ export interface LLMConversationFormPageProps {
   setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
   referenceFormSubmissionID: string | null, 
   bias: Bias, 
-  userChoseToHit: ChoseToHit,
   choseToHitOptionsSet: ChoseToHitOptionsSet
 }
 
-export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, referenceFormSubmissionID, userChoseToHit, choseToHitOptionsSet, bias } : LLMConversationFormPageProps) {
+export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, referenceFormSubmissionID, choseToHitOptionsSet, bias } : LLMConversationFormPageProps) {
 
     const [llmConversationMessages, setLLMConversationMessages] = useState<Array<LLMConversationMessage>>([
         {
@@ -37,15 +36,15 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
                 If car hits pedestrians, the pedestrians die.
                 If car hits barrier, car passengers die. 
 
-
                 DATA ABOUT ALL OPTIONS:
                 ${JSON.stringify(choseToHitOptionsData)}
 
-
-                WHAT THE USER PICKED:
+                WHAT THE USER WAS ASSIGNED:
                 Options set: ${choseToHitOptionsSet} (DO NOT MENTION THE OPTIONS SET WHEN DISCUSSING THE SCENARIO)
-                Selected option (user chose to hit this object with car): ${JSON.stringify(userChoseToHit)}
-                CONFIDENCE IS RANGED 1-7
+
+                ABOUT THE BIASES:
+                A self driving car maintaining its course, killing more pedestrians than passengers, is deontological. 
+                A self driving car that intentionally crashes into the barrier and kills fewer passengers than there are pedestrians is utilitarian.
 
                 YOUR PROMPT:
                 ${llmBiasPrompts[bias as Bias]}

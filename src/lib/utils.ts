@@ -638,7 +638,7 @@ export const surveyItemQuestions = {
 		"I think AI technology is positive for humanity."
 	],
 	pttForHuman: [
-		"Even though I may sometimes suffer the consequences of trusting other people, Istill prefer to trust than not to trust them.",
+		"Even though I may sometimes suffer the consequences of trusting other people, I still prefer to trust than not to trust them.",
 		"I rarely trust other people because I can't handle the uncertainty.",
 		"Other people are competent.",
 		"I am wary about other people's capabilities.",

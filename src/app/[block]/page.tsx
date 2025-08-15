@@ -12,10 +12,9 @@ import { SurveyItemsFormPage } from "@/components/home-form-pages/dynamic/Survey
 import { ConsentFormPage } from "@/components/home-form-pages/ConsentFormPage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { SquareArrowOutUpRightIcon } from "lucide-react";
+import { Loader2Icon, SquareArrowOutUpRightIcon } from "lucide-react";
 import { ProlificIDFormPage } from "@/components/home-form-pages/ProlificIDFormPage";
 import { PrimaryTaskIntroFormPage } from "@/components/home-form-pages/PrimaryTaskIntroFormPage";
-
 
 export default function Home() {
 
@@ -27,6 +26,7 @@ export default function Home() {
 
   const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
   const [shouldSubmitUserFormData, setShouldSubmitUserFormData] = useState<boolean>(false);
+  const [prolificCC, setProlificCC] = useState<string | null>(null);
 
   const [userFormData, setUserFormData] = useState<UserFormData>({
     prolificID: null,
@@ -34,12 +34,12 @@ export default function Home() {
     block: params.block as Block,
     demographics: null,
     survey: {
-      value: {}, 
+      value: {},
       timestamp: null
     },
     choseToHitOptionsSet: getRandomArrayItem(["1", "2", "3"]),
-    preDiscussionChoseToHit: null, 
-    llmConversationMessages: null, 
+    preDiscussionChoseToHit: null,
+    llmConversationMessages: null,
     postDiscussionChoseToHit: null,
     referenceFormSubmissionID: null
   });
@@ -55,7 +55,8 @@ export default function Home() {
   }
 
   const submitUserFormData = async () => {
-    await axios.post("/api/submitUserFormData", { userFormData });
+    const res = await axios.post("/api/submitUserFormData", { userFormData });
+    setProlificCC(res.data.prolificCC);
   }
 
   const formPages = [
@@ -152,7 +153,6 @@ export default function Home() {
       setUserFormData={setUserFormData}
       bias={userFormData.bias}
       referenceFormSubmissionID={userFormData.referenceFormSubmissionID}
-      userChoseToHit={userFormData.preDiscussionChoseToHit?.value || { selectedOption: "barrier", confidence: 4 }}
       choseToHitOptionsSet={userFormData.choseToHitOptionsSet}
       key="llmConversation"
     />,
@@ -232,7 +232,7 @@ export default function Home() {
           <span className="font-thin text-3xl w-[45rem] mt-6">
             Your feedback plays a key role in helping us better understand the topic.
           </span>
-          
+
           <Card className="w-96 mt-12">
             <CardHeader>
               <CardTitle className="text-2xl">
@@ -243,9 +243,18 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline">
-                <SquareArrowOutUpRightIcon/>
-                Return to Prolific (dummy link)
+              <Button
+                variant="outline"
+                disabled={!prolificCC}
+                onClick={() => { location.href = `https://app.prolific.com/submissions/complete?cc=${prolificCC}` }}
+                className="hover:cursor-pointer"
+              >
+                {prolificCC ? (
+                  <SquareArrowOutUpRightIcon />
+                ) : (
+                  <Loader2Icon className="animate-spin" />
+                )}
+                Return to Prolific
               </Button>
             </CardContent>
           </Card>
@@ -253,7 +262,7 @@ export default function Home() {
         </div>
       )}
     </div>
-    
+
   )
 
 }
