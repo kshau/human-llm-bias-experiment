@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { SelectValue } from "@radix-ui/react-select";
 import axios from "axios";
 
-
 interface DemographicsFormPageProps {
     goToNextFormPage: CallableFunction, 
     setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
@@ -52,7 +51,9 @@ export function DemographicsFormPage({ goToNextFormPage, setUserFormData, userFo
 
   useEffect(() => {
 
-    getRandomReferenceFormSubmissionID();
+    if (!userFormData.referenceFormSubmissionID) {
+        getRandomReferenceFormSubmissionID();
+    }
 
     const newInvalidAge = demographics.age != null && (demographics.age < 18 || demographics.age > 65);
     setInvalidAge(newInvalidAge);

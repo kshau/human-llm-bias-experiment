@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2Icon, SquareArrowOutUpRightIcon } from "lucide-react";
 import { ProlificIDFormPage } from "@/components/home-form-pages/ProlificIDFormPage";
 import { PrimaryTaskIntroFormPage } from "@/components/home-form-pages/PrimaryTaskIntroFormPage";
+import { Loading } from "@/components/Loading";
 
 export default function Home() {
 
@@ -27,6 +28,8 @@ export default function Home() {
   const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
   const [shouldSubmitUserFormData, setShouldSubmitUserFormData] = useState<boolean>(false);
   const [prolificCC, setProlificCC] = useState<string | null>(null);
+  
+  const [loadingSavedData, setLoadingSavedData] = useState<boolean>(true);
 
   const [userFormData, setUserFormData] = useState<UserFormData>({
     prolificID: null,
@@ -52,12 +55,47 @@ export default function Home() {
 
     setCurrentFormPageIndex(o => o + 1);
 
+    localStorage.setItem("userFormData", JSON.stringify(userFormData));
+    localStorage.setItem("currentFormPageIndex", JSON.stringify(currentFormPageIndex));
+
   }
 
   const submitUserFormData = async () => {
+
     const res = await axios.post("/api/submitUserFormData", { userFormData });
     setProlificCC(res.data.prolificCC);
+
+    if (res.status == 200) {
+      localStorage.clear();
+    }
+
   }
+
+  useEffect(() => {
+
+    console.log(userFormData.bias);
+
+    const savedUserFormDataString = localStorage.getItem("userFormData");
+    const savedCurrentFormPageIndexString = localStorage.getItem("currentFormPageIndex");
+
+    if (savedUserFormDataString && savedCurrentFormPageIndexString) {
+
+      const savedUserFormData = JSON.parse(savedUserFormDataString);
+      const savedCurrentFormPageIndex = JSON.parse(savedCurrentFormPageIndexString);
+
+      if (savedUserFormData.block != params.block) {
+        setLoadingSavedData(false);
+        return;
+      }
+
+      setUserFormData(savedUserFormData);
+      setCurrentFormPageIndex(savedCurrentFormPageIndex);
+
+    }
+
+    setLoadingSavedData(false);
+
+  }, [])
 
   const formPages = [
     <ConsentFormPage
@@ -213,12 +251,12 @@ export default function Home() {
   }, [shouldSubmitUserFormData, userFormData]);
 
   useEffect(() => {
-    console.log(userFormData.bias);
-  }, [])
-
-  useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentFormPageIndex]);
+
+  if (loadingSavedData) {
+    return <Loading/>
+  }
 
   return (
 
@@ -243,19 +281,47 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button
-                variant="outline"
-                disabled={!prolificCC}
-                onClick={() => { location.href = `https://app.prolific.com/submissions/complete?cc=${prolificCC}` }}
-                className="hover:cursor-pointer"
-              >
-                {prolificCC ? (
-                  <SquareArrowOutUpRightIcon />
-                ) : (
-                  <Loader2Icon className="animate-spin" />
-                )}
-                Return to Prolific
-              </Button>
+              {prolificCC ? (
+                <span className="uppercase text-green-500 font-semibold">
+                  You can now return to Prolific with the button below
+                </span>
+              ) : (
+                <span className="uppercase text-destructive font-semibold">
+                  Do not refresh or leave this page
+                </span>
+              )}
+
+              <div className="flex flex-col items-center gap-y-2 mt-6">
+
+                <Button
+                  variant="outline"
+                  disabled={!prolificCC}
+                  onClick={() => { window.open(`https://app.prolific.com/submissions/complete?cc=${prolificCC}`) }}
+                  className="hover:cursor-pointer w-fit"
+                >
+                  {prolificCC ? (
+                    <SquareArrowOutUpRightIcon />
+                  ) : (
+                    <Loader2Icon className="animate-spin" />
+                  )}
+                  Return to Prolific
+                </Button>
+
+                <span className="text-muted-foreground">
+                  OR
+                </span>
+
+                <div className="flex gap-x-2">
+                  <span className="font-semibold">
+                    Prolific CC:
+                  </span>
+                  <span>
+                    {prolificCC || <Loader2Icon className="animate-spin" />}
+                  </span>
+                </div>
+
+              </div>
+
             </CardContent>
           </Card>
 
