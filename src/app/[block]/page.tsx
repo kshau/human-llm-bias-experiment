@@ -12,10 +12,12 @@ import { SurveyItemsFormPage } from "@/components/home-form-pages/dynamic/Survey
 import { ConsentFormPage } from "@/components/home-form-pages/ConsentFormPage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2Icon, SquareArrowOutUpRightIcon } from "lucide-react";
+import { CopyIcon, Loader2Icon, SquareArrowOutUpRightIcon } from "lucide-react";
 import { ProlificIDFormPage } from "@/components/home-form-pages/ProlificIDFormPage";
 import { PrimaryTaskIntroFormPage } from "@/components/home-form-pages/PrimaryTaskIntroFormPage";
 import { Loading } from "@/components/Loading";
+import { toast } from "sonner"
+
 
 export default function Home() {
 
@@ -25,7 +27,7 @@ export default function Home() {
     notFound();
   }
 
-  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
+  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(16);
   const [shouldSubmitUserFormData, setShouldSubmitUserFormData] = useState<boolean>(false);
   const [prolificCC, setProlificCC] = useState<string | null>(null);
   
@@ -254,6 +256,11 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, [currentFormPageIndex]);
 
+  const copyUserFormDataToClipboard = () => {
+    navigator.clipboard.writeText(JSON.stringify(userFormData));
+    toast("Raw data copied to clipboard!");
+  }
+
   if (loadingSavedData) {
     return <Loading/>
   }
@@ -318,6 +325,20 @@ export default function Home() {
                   <span>
                     {prolificCC || <Loader2Icon className="animate-spin" />}
                   </span>
+                </div>
+
+                <div className="flex flex-col mt-8 gap-y-4">
+                  <span>
+                    Stuck on loading? Copy the raw data and send it to the study administrator manually.
+                  </span>
+                  <Button 
+                    variant="secondary" 
+                    className="w-fit self-center hover:cursor-pointer"
+                    onClick={copyUserFormDataToClipboard}
+                  >
+                    <CopyIcon/>
+                    Click to copy
+                  </Button>
                 </div>
 
               </div>
