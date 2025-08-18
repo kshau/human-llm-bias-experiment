@@ -27,7 +27,7 @@ export default function Home() {
     notFound();
   }
 
-  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(16);
+  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
   const [shouldSubmitUserFormData, setShouldSubmitUserFormData] = useState<boolean>(false);
   const [prolificCC, setProlificCC] = useState<string | null>(null);
   
