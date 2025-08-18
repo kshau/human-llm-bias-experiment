@@ -294,7 +294,7 @@ export default function Home() {
                 </span>
               ) : (
                 <span className="uppercase text-destructive font-semibold">
-                  Do not refresh or leave this page
+                  Please wait! Only refresh the page if the completion code does not load
                 </span>
               )}
 
