@@ -4,26 +4,25 @@ import { Bias, choseToHitOptionsData, ChoseToHitOptionsSet, llmBiasPrompts, LLMC
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { BotIcon, ChevronRight, SendHorizonalIcon, UserIcon } from "lucide-react";
+import { BotIcon, ChevronRight, SendHorizonalIcon, TimerIcon, UserIcon } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { ScrollArea } from "../ui/scroll-area";
-import { Loading } from "../Loading";
 
 export interface LLMConversationFormPageProps {
-  goToNextFormPage: CallableFunction, 
-  setUserFormData: Dispatch<SetStateAction<UserFormData>>, 
-  referenceFormSubmissionID: string | null, 
-  bias: Bias, 
-  choseToHitOptionsSet: ChoseToHitOptionsSet
+    goToNextFormPage: CallableFunction,
+    setUserFormData: Dispatch<SetStateAction<UserFormData>>,
+    referenceFormSubmissionID: string | null,
+    bias: Bias,
+    choseToHitOptionsSet: ChoseToHitOptionsSet
 }
 
-export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, referenceFormSubmissionID, choseToHitOptionsSet, bias } : LLMConversationFormPageProps) {
+export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, referenceFormSubmissionID, choseToHitOptionsSet, bias }: LLMConversationFormPageProps) {
 
     const [llmConversationMessages, setLLMConversationMessages] = useState<Array<LLMConversationMessage>>([
         {
-            from: "user", 
+            from: "user",
             content: `
 
                 CONTEXT:
@@ -59,37 +58,38 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
     const [userMessageDraftContent, setUserMessageDraftContent] = useState<string>("");
 
     const [userMessageDraftContentMinLength, setUserMessageDraftContentMinLength] = useState<number>(llmConversationMessageContentMinLength);
-	const [userMessageDraftContentMaxLength, setUserMessageDraftContentMaxLength] = useState<number>(llmConversationMessageContentMaxLength);
+    const [userMessageDraftContentMaxLength, setUserMessageDraftContentMaxLength] = useState<number>(llmConversationMessageContentMaxLength);
 
     const [userMessageDraftLengthStatus, setUserMessageDraftContentLengthStatus] = useState<"short" | "long" | "valid">("short");
 
     const [userCanSendMessage, setUserCanSendMessage] = useState<boolean>(false);
     const [userCanMoveToNextFormPage, setUserCanMoveToNextFormPage] = useState<boolean>(false);
 
-    const [loadingReferenceLLMConversationSummaryData, setLoadingReferenceLLMConversationSummaryData] = useState<boolean>(true);
     const [referenceLLMConversationSummaryData, setReferenceLLMConversationSummaryData] = useState<LLMConversationSummaryData | null>(null);
+
+    const [llmConversationTimer, setLLMConversationTimer] = useState<number>(10);
 
     const llmConversationScrollAreaRef = useRef<HTMLDivElement>(null);
     const recievedInitialLLMConversationMessage = useRef(false);
     const recievedReferenceLLMConversationSummaryData = useRef(false);
-    
+
     useEffect(() => {
 
         if (llmConversationScrollAreaRef.current) {
-            llmConversationScrollAreaRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' }); 
+            llmConversationScrollAreaRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
 
     }, [llmConversationMessages]);
 
 
     const getLLMConversationResponse = async (llmConversationMessages_: Array<LLMConversationMessage>) => {
-        
+
         const res = await axios.post("/api/getLLMConversationResponse", { llmConversationMessages: llmConversationMessages_ });
 
         switch (res.data.llmConversationEvent) {
             case "summarize":
                 setUserMessageDraftContentMinLength(llmConversationSummaryContentMinLength);
-				setUserMessageDraftContentMaxLength(llmConversationSummaryContentMaxLength);
+                setUserMessageDraftContentMaxLength(llmConversationSummaryContentMaxLength);
                 break;
             case "end":
                 setUserCanMoveToNextFormPage(true);
@@ -97,25 +97,25 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
         }
 
         setLLMConversationMessages(o => [
-            ...o, 
+            ...o,
             {
-                from: "model", 
-                content: res.data.llmConversationResponse, 
+                from: "model",
+                content: res.data.llmConversationResponse,
                 visibleToUser: true,
                 timestamp: Date.now()
             }
         ]);
-        
+
         setUserCanSendMessage(true);
 
     }
 
     const sendUserMessageDraft = async () => {
-        
+
         const newLLMConversationMessage: LLMConversationMessage = {
-            from: "user", 
-            content: userMessageDraftContent, 
-            visibleToUser: true, 
+            from: "user",
+            content: userMessageDraftContent,
+            visibleToUser: true,
             timestamp: Date.now()
         };
 
@@ -131,51 +131,57 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
     const getReferenceLLMConversationSummaryData = async () => {
         const res = await axios.post("/api/getReferenceLLMConversationSummaryData", { referenceFormSubmissionID });
         setReferenceLLMConversationSummaryData(res.data.referenceLLMConversationSummaryData);
-        setLoadingReferenceLLMConversationSummaryData(false);
     }
 
     useEffect(() => {
 
-        if (!recievedReferenceLLMConversationSummaryData.current) {
+        const llmConversationTimerInterval = setInterval(() => {
+            setLLMConversationTimer(prev => prev - 1);
+        }, 1000);
+
+        if (!recievedReferenceLLMConversationSummaryData.current && !referenceLLMConversationSummaryData) {
             getReferenceLLMConversationSummaryData();
-            recievedReferenceLLMConversationSummaryData.current = true;
         }
+        recievedReferenceLLMConversationSummaryData.current = true;
 
         if (!recievedInitialLLMConversationMessage.current) {
             getLLMConversationResponse(llmConversationMessages);
             recievedInitialLLMConversationMessage.current = true;
         }
 
+        return () => {
+            clearInterval(llmConversationTimerInterval);
+        }
+
     }, []);
 
     useEffect(() => {
-		if (userMessageDraftContent.length < userMessageDraftContentMinLength) {
-			setUserMessageDraftContentLengthStatus("short");
-		}
-		else if (userMessageDraftContent.length > userMessageDraftContentMaxLength) {
-			setUserMessageDraftContentLengthStatus("long");
-		}
-		else {
-			setUserMessageDraftContentLengthStatus("valid");
-		}
+        if (userMessageDraftContent.length < userMessageDraftContentMinLength) {
+            setUserMessageDraftContentLengthStatus("short");
+        }
+        else if (userMessageDraftContent.length > userMessageDraftContentMaxLength) {
+            setUserMessageDraftContentLengthStatus("long");
+        }
+        else {
+            setUserMessageDraftContentLengthStatus("valid");
+        }
     }, [userMessageDraftContent]);
-
-    if (loadingReferenceLLMConversationSummaryData) {
-        return <Loading/>
-    }
 
     return (
 
         <div className="space-y-2 w-[50rem]">
 
-            <LLMConversationFormPageSummaryCard summaryData={
-                {
-                    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ", 
-                    by: "user"
-                }
-            }/>
-            {referenceLLMConversationSummaryData && <LLMConversationFormPageSummaryCard summaryData={referenceLLMConversationSummaryData}/>}
-            
+            {referenceLLMConversationSummaryData && <LLMConversationFormPageSummaryCard summaryData={referenceLLMConversationSummaryData} />}
+
+            {(recievedReferenceLLMConversationSummaryData.current && referenceLLMConversationSummaryData && llmConversationTimer > 0) ? (
+                <div className="flex flex-col items-center mt-12 gap-y-2">
+                    <TimerIcon size={60} />
+                    <span className="text-center w-48">
+                        <span>You can talk to the LLM in {llmConversationTimer} seconds</span>
+                    </span>
+                </div>
+
+            ) : (
                 <Card>
 
                     <CardHeader>
@@ -190,81 +196,84 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
                     <CardContent>
                         <ScrollArea className="pr-4 overflow-y-auto">
                             <div className="flex flex-col space-y-4 h-[50vh]">
-                                {llmConversationMessages.map((message, index) => message.visibleToUser && <LLMConversationFormPageMessage message={message} key={index}/>)}
-								{!userCanSendMessage && <LLMConversationFormPageMessage typing={true} message={{from: "model", content: "", visibleToUser: true, timestamp: null}}/>}
+                                {llmConversationMessages.map((message, index) => message.visibleToUser && <LLMConversationFormPageMessage message={message} key={index} />)}
+                                {!userCanSendMessage && <LLMConversationFormPageMessage typing={true} message={{ from: "model", content: "", visibleToUser: true, timestamp: null }} />}
                                 <div ref={llmConversationScrollAreaRef} />
                             </div>
                         </ScrollArea>
-                        
+
                         <div className="mt-6 relative max-w-[50rem]">
                             <Textarea
                                 className="resize-none min-h-[2.5rem] pr-26 w-full"
                                 placeholder="Type a message"
-                                onChange={e => {setUserMessageDraftContent(e.target.value)}}
+                                onChange={e => { setUserMessageDraftContent(e.target.value) }}
                                 disabled={!userCanSendMessage || userCanMoveToNextFormPage}
                                 value={userMessageDraftContent}
                             />
 
                             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-row">
-                                
+
                                 {userMessageDraftContentMinLength != 0 && (
                                     <div className="text-sm my-auto text-muted-foreground">
                                         <span className={`${userMessageDraftLengthStatus != "valid" && "text-destructive"}`}>
-											{userMessageDraftContent.length}
-										</span>
+                                            {userMessageDraftContent.length}
+                                        </span>
                                         <span>/</span>
                                         <span>{userMessageDraftContentMinLength}</span>
                                     </div>
                                 )}
-                                
 
-                                <Button 
-                                    className="text-muted-foreground hover:text-muted-foreground cursor-pointer h-fit" 
-                                    variant="ghost" 
-                                    onClick={sendUserMessageDraft} 
+
+                                <Button
+                                    className="text-muted-foreground hover:text-muted-foreground cursor-pointer h-fit"
+                                    variant="ghost"
+                                    onClick={sendUserMessageDraft}
                                     disabled={!userCanSendMessage || userMessageDraftLengthStatus != "valid" || userCanMoveToNextFormPage}
                                 >
-                                    <SendHorizonalIcon className="w-5"/>
+                                    <SendHorizonalIcon className="w-5" />
                                 </Button>
 
                             </div>
-                            
+
                         </div>
-                        
+
                         {userMessageDraftLengthStatus == "short" && userMessageDraftContent.length > 0 && (
                             <span className="text-sm text-destructive">
                                 Please provide a longer response.
                             </span>
                         )}
 
-						{userMessageDraftLengthStatus == "long" && (
-							<span className="text-sm text-destructive">
+                        {userMessageDraftLengthStatus == "long" && (
+                            <span className="text-sm text-destructive">
                                 Your response exceeds the {llmConversationMessageContentMaxLength} character limit! Please provide a shorter one.
                             </span>
-						)}
-                        
+                        )}
+
 
                     </CardContent>
 
                 </Card>
+            )}
 
-            
+
+
+
 
             <Button className="hover:cursor-pointer" onClick={() => {
 
-                    setUserFormData(o => ({
-                        ...o, 
-                        llmConversationMessages: {
-                            value: llmConversationMessages, 
-                            timestamp: Date.now()
-                        } 
-                    }));
+                setUserFormData(o => ({
+                    ...o,
+                    llmConversationMessages: {
+                        value: llmConversationMessages,
+                        timestamp: Date.now()
+                    }
+                }));
 
-                    goToNextFormPage();
-                    
-                }} disabled={!userCanMoveToNextFormPage}>
-                    Next
-                    <ChevronRight/>
+                goToNextFormPage();
+
+            }} disabled={!userCanMoveToNextFormPage}>
+                Next
+                <ChevronRight />
             </Button>
 
         </div>
@@ -274,16 +283,16 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
 }
 
 interface LLMConversationFormPageMessageProps {
-    message: LLMConversationMessage, 
-	typing?: boolean
+    message: LLMConversationMessage,
+    typing?: boolean
 }
 
 function LLMConversationFormPageMessage({ message, typing = false }: LLMConversationFormPageMessageProps) {
 
-	const formatMessageTimestamp = (timestamp: number) => {
-		if (!timestamp) {
-			return "";
-		}
+    const formatMessageTimestamp = (timestamp: number) => {
+        if (!timestamp) {
+            return "";
+        }
         const date = new Date(timestamp);
         let hours = date.getHours();
         const minutes = date.getMinutes();
@@ -294,69 +303,69 @@ function LLMConversationFormPageMessage({ message, typing = false }: LLMConversa
         return `${hours}:${minutesStr} ${ampm}`;
     }
 
-	return (
-		<div className={`${message.from == "model" ? "mr-auto" : "ml-auto"} flex flex-row space-x-2`}>
-			{message.from == "model" && (
-				<div className="rounded-full border-1 border-foreground aspect-square w-8 h-8 flex">
-				<BotIcon className="m-auto" strokeWidth={1} />
-				</div>
-			)}
+    return (
+        <div className={`${message.from == "model" ? "mr-auto" : "ml-auto"} flex flex-row space-x-2`}>
+            {message.from == "model" && (
+                <div className="rounded-full border-1 border-foreground aspect-square w-8 h-8 flex">
+                    <BotIcon className="m-auto" strokeWidth={1} />
+                </div>
+            )}
 
-			<div className="flex flex-col gap-y-1">
-				<div
-					className={`
+            <div className="flex flex-col gap-y-1">
+                <div
+                    className={`
 						${message.from == "model"
-						? "border rounded-t-xl rounded-br-xl rounded-bl-xs text-black dark:text-white"
-						: "bg-primary rounded-t-xl rounded-bl-xl rounded-br-xs text-white ml-auto"}
+                            ? "border rounded-t-xl rounded-br-xl rounded-bl-xs text-black dark:text-white"
+                            : "bg-primary rounded-t-xl rounded-bl-xl rounded-br-xs text-white ml-auto"}
 						p-2 text-sm max-w-[38rem] w-fit break-words
 					`}
-				>
-					{typing ? (
-						<div className="flex gap-1 items-end h-5 m-1">
-							<div className="animate-bounce w-[6px] h-[6px] rounded-full bg-black dark:bg-white mb-1" style={{ animationDelay: "0ms" }} />
-							<div className="animate-bounce w-[6px] h-[6px] rounded-full bg-black dark:bg-white mb-1" style={{ animationDelay: "150ms" }} />
-							<div className="animate-bounce w-[6px] h-[6px] rounded-full bg-black dark:bg-white mb-1" style={{ animationDelay: "300ms" }} />
-						</div>
-					) : (
-						<ReactMarkdown>
-							{message.content}
-						</ReactMarkdown>
-					)}
-					
-				</div>
+                >
+                    {typing ? (
+                        <div className="flex gap-1 items-end h-5 m-1">
+                            <div className="animate-bounce w-[6px] h-[6px] rounded-full bg-black dark:bg-white mb-1" style={{ animationDelay: "0ms" }} />
+                            <div className="animate-bounce w-[6px] h-[6px] rounded-full bg-black dark:bg-white mb-1" style={{ animationDelay: "150ms" }} />
+                            <div className="animate-bounce w-[6px] h-[6px] rounded-full bg-black dark:bg-white mb-1" style={{ animationDelay: "300ms" }} />
+                        </div>
+                    ) : (
+                        <ReactMarkdown>
+                            {message.content}
+                        </ReactMarkdown>
+                    )}
 
-				<span
-					className={`
+                </div>
+
+                <span
+                    className={`
 						text-sm text-muted-foreground
 						${message.from === "model" ? "text-left" : "text-right self-end"}
 					`}
-				>
-					{formatMessageTimestamp(message.timestamp || 0)}
-				</span>
-			</div>
+                >
+                    {formatMessageTimestamp(message.timestamp || 0)}
+                </span>
+            </div>
 
-			{message.from == "user" && (
-				<div className="rounded-full border-1 border-foreground aspect-square w-8 h-8 flex">
-					<UserIcon className="m-auto" strokeWidth={1} />
-				</div>
-			)}
-		</div>
-	)
+            {message.from == "user" && (
+                <div className="rounded-full border-1 border-foreground aspect-square w-8 h-8 flex">
+                    <UserIcon className="m-auto" strokeWidth={1} />
+                </div>
+            )}
+        </div>
+    )
 }
 
 interface LLMConversationFormPageSummaryCardProps {
-	summaryData: LLMConversationSummaryData
+    summaryData: LLMConversationSummaryData
 }
 
-function LLMConversationFormPageSummaryCard({ summaryData } : LLMConversationFormPageSummaryCardProps) {
+function LLMConversationFormPageSummaryCard({ summaryData }: LLMConversationFormPageSummaryCardProps) {
 
-	return (
+    return (
 
-		<Card>
+        <Card>
 
             <CardHeader>
                 <CardTitle className="text-2xl">
-                    Previous Summary 
+                    Previous Summary
                 </CardTitle>
                 <CardDescription>
                     A previous user chatted with the LLM on the same topic and also made their decision, here is a summary provided by
@@ -365,7 +374,7 @@ function LLMConversationFormPageSummaryCard({ summaryData } : LLMConversationFor
                     </span>{" "}
                     Please read carefully. {" "}
                     <span className="font-bold">
-                        Your future responses require knowledge of this summary.  
+                        Your future responses require knowledge of this summary.
                     </span>
                 </CardDescription>
             </CardHeader>
@@ -376,6 +385,6 @@ function LLMConversationFormPageSummaryCard({ summaryData } : LLMConversationFor
 
         </Card>
 
-	)
+    )
 
 }
