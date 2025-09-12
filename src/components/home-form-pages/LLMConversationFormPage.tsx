@@ -9,6 +9,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { ScrollArea } from "../ui/scroll-area";
+import { Loading } from "../Loading";
 
 export interface LLMConversationFormPageProps {
   goToNextFormPage: CallableFunction, 
@@ -65,6 +66,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
     const [userCanSendMessage, setUserCanSendMessage] = useState<boolean>(false);
     const [userCanMoveToNextFormPage, setUserCanMoveToNextFormPage] = useState<boolean>(false);
 
+    const [loadingReferenceLLMConversationSummaryData, setLoadingReferenceLLMConversationSummaryData] = useState<boolean>(true);
     const [referenceLLMConversationSummaryData, setReferenceLLMConversationSummaryData] = useState<LLMConversationSummaryData | null>(null);
 
     const llmConversationScrollAreaRef = useRef<HTMLDivElement>(null);
@@ -129,6 +131,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
     const getReferenceLLMConversationSummaryData = async () => {
         const res = await axios.post("/api/getReferenceLLMConversationSummaryData", { referenceFormSubmissionID });
         setReferenceLLMConversationSummaryData(res.data.referenceLLMConversationSummaryData);
+        setLoadingReferenceLLMConversationSummaryData(false);
     }
 
     useEffect(() => {
@@ -155,12 +158,22 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
 		else {
 			setUserMessageDraftContentLengthStatus("valid");
 		}
-    }, [userMessageDraftContent])
+    }, [userMessageDraftContent]);
+
+    if (loadingReferenceLLMConversationSummaryData) {
+        return <Loading/>
+    }
 
     return (
 
         <div className="space-y-2 w-[50rem]">
 
+            <LLMConversationFormPageSummaryCard summaryData={
+                {
+                    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ", 
+                    by: "user"
+                }
+            }/>
             {referenceLLMConversationSummaryData && <LLMConversationFormPageSummaryCard summaryData={referenceLLMConversationSummaryData}/>}
             
                 <Card>
@@ -346,10 +359,14 @@ function LLMConversationFormPageSummaryCard({ summaryData } : LLMConversationFor
                     Previous Summary 
                 </CardTitle>
                 <CardDescription>
-                    Summary of a previous conversation, written by 
+                    A previous user chatted with the LLM on the same topic and also made their decision, here is a summary provided by
                     <span className="font-semibold text-primary">
                         {summaryData.by == "user" ? " another user" : " artificial intelligence"}.
-                    </span> 
+                    </span>{" "}
+                    Please read carefully. {" "}
+                    <span className="font-bold">
+                        Your future responses require knowledge of this summary.  
+                    </span>
                 </CardDescription>
             </CardHeader>
 
