@@ -35,7 +35,7 @@ export default function Home() {
 
   const [userFormData, setUserFormData] = useState<UserFormData>({
     prolificID: null,
-    bias: getRandomArrayItem(["neutral", "utilitarian", "deontological"]),
+    bias: "neutral", // getRandomArrayItem(["neutral", "utilitarian", "deontological"]),
     block: params.block as Block,
     demographics: null,
     survey: {
