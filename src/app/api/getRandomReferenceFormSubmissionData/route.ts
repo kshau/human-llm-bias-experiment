@@ -13,20 +13,31 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });
         }
 
-        const formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: block == "2" ? "1" : "2", isReferenced: false });
-
-        if (formSubmissionCandidateDocs.length <= 0) {
-            return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });
+        let referenceFormSubmissionDoc;
+        
+        if (block == "2") {
+            referenceFormSubmissionDoc = await FormSubmission.findOne({ bias, block: "1" });
+            console.log(referenceFormSubmissionDoc);
         }
 
-        const referenceFormSubmissionDoc = getRandomArrayItem(formSubmissionCandidateDocs);
+        else {
+
+            const formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: block == "2" ? "1" : "2", isReferenced: false });
+
+            if (formSubmissionCandidateDocs.length <= 0) {
+                return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });
+            }
+
+            referenceFormSubmissionDoc = getRandomArrayItem(formSubmissionCandidateDocs);
+
+        }
 
         referenceFormSubmissionDoc.isReferenced = true;
         await referenceFormSubmissionDoc.save();
 
-        return NextResponse.json({ 
-            referenceFormSubmissionID: referenceFormSubmissionDoc.id, 
-            referenceFormSubmissionChoseToHitOptionsSet: referenceFormSubmissionDoc.choseToHitOptionsSet 
+        return NextResponse.json({
+            referenceFormSubmissionID: referenceFormSubmissionDoc.id,
+            referenceFormSubmissionChoseToHitOptionsSet: referenceFormSubmissionDoc.choseToHitOptionsSet
         }, { status: 200 });
 
     }
