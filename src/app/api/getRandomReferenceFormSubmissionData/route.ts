@@ -14,10 +14,24 @@ export async function POST(request: NextRequest) {
         }
 
         let referenceFormSubmissionDoc;
+        let referenceFormSubmissionDocId;
         
         if (block == "2") {
-            referenceFormSubmissionDoc = await FormSubmission.findOne({ bias, block: "1" });
-            console.log(referenceFormSubmissionDoc);
+
+            switch (bias) {
+                case "utilitarian":
+                    referenceFormSubmissionDocId = "6908ed545246ba3da52e79bc";
+                    break;
+                case "deontological":
+                    referenceFormSubmissionDocId = "69026165b0c403395d282cb6";
+                    break;
+                case "neutral":
+                    referenceFormSubmissionDocId = "6909457ee02caee211272083";
+                    break;
+            }
+
+            referenceFormSubmissionDoc = await FormSubmission.findById(referenceFormSubmissionDocId);
+
         }
 
         else {
