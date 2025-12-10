@@ -13,46 +13,52 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });
         }
 
-        // let referenceFormSubmissionDoc;
-        // let referenceFormSubmissionDocId;
+        // ===================================================================
+
+        let referenceFormSubmissionDoc;
+        let referenceFormSubmissionDocId;
         
-        // if (block == "2") {
+        if (block == "2") {
 
-        //     switch (bias) {
-        //         case "utilitarian":
-        //             referenceFormSubmissionDocId = "6908ed545246ba3da52e79bc";
-        //             break;
-        //         case "deontological":
-        //             referenceFormSubmissionDocId = "69026165b0c403395d282cb6";
-        //             break;
-        //         case "neutral":
-        //             referenceFormSubmissionDocId = "6909457ee02caee211272083";
-        //             break;
-        //     }
+            switch (bias) {
+                case "utilitarian":
+                    referenceFormSubmissionDocId = "6908ed545246ba3da52e79bc";
+                    break;
+                case "deontological":
+                    referenceFormSubmissionDocId = "69026165b0c403395d282cb6";
+                    break;
+                case "neutral":
+                    referenceFormSubmissionDocId = "6909457ee02caee211272083";
+                    break;
+            }
 
-        //     referenceFormSubmissionDoc = await FormSubmission.findById(referenceFormSubmissionDocId);
+            referenceFormSubmissionDoc = await FormSubmission.findById(referenceFormSubmissionDocId);
 
-        // }
-
-        // else {
-
-        //     const formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: block == "2" ? "1" : "2", isReferenced: false });
-
-        //     if (formSubmissionCandidateDocs.length <= 0) {
-        //         return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });
-        //     }
-
-        //     referenceFormSubmissionDoc = getRandomArrayItem(formSubmissionCandidateDocs);
-
-        // }
-
-        const formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: block == "2" ? "1" : "2", isReferenced: false });
-
-        if (formSubmissionCandidateDocs.length <= 0) {
-            return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });
         }
 
-        const referenceFormSubmissionDoc = getRandomArrayItem(formSubmissionCandidateDocs);
+        else {
+
+            const formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: block == "2" ? "1" : "2", isReferenced: false });
+
+            if (formSubmissionCandidateDocs.length <= 0) {
+                return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });
+            }
+
+            referenceFormSubmissionDoc = getRandomArrayItem(formSubmissionCandidateDocs);
+
+        }
+
+        // =====================================================================================
+
+        // const formSubmissionCandidateDocs = await FormSubmission.find({ bias, block: block == "2" ? "1" : "2", isReferenced: false });
+
+        // if (formSubmissionCandidateDocs.length <= 0) {
+        //     return NextResponse.json({ referenceFormSubmissionID: null, referenceFormSubmissionChoseToHitOptionsSet: null }, { status: 200 });
+        // }
+
+        // const referenceFormSubmissionDoc = getRandomArrayItem(formSubmissionCandidateDocs);
+
+        // =====================================================================================
 
         referenceFormSubmissionDoc.isReferenced = true;
         await referenceFormSubmissionDoc.save();
