@@ -4,7 +4,7 @@ import { Bias, choseToHitOptionsData, ChoseToHitOptionsSet, llmBiasPrompts, LLMC
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { BotIcon, ChevronRight, SendHorizonalIcon, TimerIcon, UserIcon } from "lucide-react";
+import { ArrowRightIcon, BotIcon, ChevronRight, SendHorizonalIcon, TimerIcon, UserIcon } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
@@ -68,6 +68,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
     const [referenceLLMConversationSummaryData, setReferenceLLMConversationSummaryData] = useState<LLMConversationSummaryData | null>(null);
 
     const [llmConversationTimer, setLLMConversationTimer] = useState<number>(10);
+    const [userFinishedReadingSummary, setUserFinishedReadingSummary] = useState<boolean>(false);
 
     const llmConversationScrollAreaRef = useRef<HTMLDivElement>(null);
     const recievedInitialLLMConversationMessage = useRef(false);
@@ -173,12 +174,25 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
 
             {referenceLLMConversationSummaryData && <LLMConversationFormPageSummaryCard summaryData={referenceLLMConversationSummaryData} />}
 
-            {(recievedReferenceLLMConversationSummaryData.current && referenceLLMConversationSummaryData && llmConversationTimer > 0) ? (
+            {(recievedReferenceLLMConversationSummaryData.current && referenceLLMConversationSummaryData && (llmConversationTimer > 0 || !userFinishedReadingSummary)) ? (
                 <div className="flex flex-col items-center mt-12 gap-y-2">
-                    <TimerIcon size={60} />
-                    <span className="text-center w-48">
-                        <span>You can talk to the LLM in {llmConversationTimer} seconds</span>
-                    </span>
+                    {llmConversationTimer > 0 ? (
+                        <>
+                            <TimerIcon size={60} />
+                            <span className="text-center w-48">
+                                <span>You can talk to the LLM in {llmConversationTimer} seconds</span>
+                            </span>
+                        </>
+                    ) : (
+                        <Button
+                            onClick={() => setUserFinishedReadingSummary(true)}
+                            variant="outline"
+                        >
+                            I Finished Reading
+                            <ArrowRightIcon/>
+                        </Button>
+                    )}
+
                 </div>
 
             ) : (
