@@ -281,7 +281,7 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
                         value: llmConversationMessages,
                         timestamp: Date.now()
                     }, 
-                    recievedLLMConversationBy: referenceLLMConversationSummaryData?.by
+                    receivedLLMConversationBy: referenceLLMConversationSummaryData?.by
                 }));
 
                 goToNextFormPage();

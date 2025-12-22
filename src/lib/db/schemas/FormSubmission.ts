@@ -13,7 +13,7 @@ const formSubmissionSchema = new Schema({
     postDiscussionChoseToHit: { type: Object, required: false }, 
     modelLLMConversationSummary: { type: String, required: false },
     llmConversationSummarizedBy: { type: String, default: null, required: false }, 
-    recievedLLMConversationBy: { type: String, default: null, required: false },
+    receivedLLMConversationBy: { type: String, default: null, required: false },
     referenceFormSubmissionID: { type: String, default: null, required: false }, 
     isReferenced: { type: Boolean, default: false, required: false }
 });
