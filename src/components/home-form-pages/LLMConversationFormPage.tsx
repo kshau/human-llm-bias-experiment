@@ -280,7 +280,8 @@ export function LLMConversationFormPage({ goToNextFormPage, setUserFormData, ref
                     llmConversationMessages: {
                         value: llmConversationMessages,
                         timestamp: Date.now()
-                    }
+                    }, 
+                    recievedLLMConversationBy: referenceLLMConversationSummaryData?.by
                 }));
 
                 goToNextFormPage();
