@@ -2,7 +2,7 @@
 
 import { LLMConversationFormPage } from "@/components/home-form-pages/LLMConversationFormPage";
 import { ChoseToHitFormPage } from "@/components/home-form-pages/dynamic/ChoseToHitFormPage"
-import { Block, getRandomArrayItem, surveyItemQuestions, UserFormData } from "@/lib/utils";
+import { Bias, biases, Block, getRandomArrayItem, surveyItemQuestions, UserFormData } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { notFound, useParams } from 'next/navigation';
@@ -18,338 +18,350 @@ import { PrimaryTaskIntroFormPage } from "@/components/home-form-pages/PrimaryTa
 import { Loading } from "@/components/Loading";
 import { toast } from "sonner"
 
+const ENFORCE_BIAS = process.env.NEXT_PUBLIC_ENFORCE_BIAS;
+
 
 export default function Home() {
 
-  const params = useParams();
+	const params = useParams();
 
-  if (!(["1", "2", "3"].includes(params.block as Block))) {
-    notFound();
-  }
+	if (!(["1", "2", "3"].includes(params.block as Block))) {
+		notFound();
+	}
 
-  const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
-  const [shouldSubmitUserFormData, setShouldSubmitUserFormData] = useState<boolean>(false);
-  const [prolificCC, setProlificCC] = useState<string | null>(null);
-  
-  const [loadingSavedData, setLoadingSavedData] = useState<boolean>(true);
+	const [currentFormPageIndex, setCurrentFormPageIndex] = useState<number>(0);
+	const [shouldSubmitUserFormData, setShouldSubmitUserFormData] = useState<boolean>(false);
+	const [prolificCC, setProlificCC] = useState<string | null>(null);
 
-  const [userFormData, setUserFormData] = useState<UserFormData>({
-    prolificID: null,
-    bias: getRandomArrayItem(["neutral", "utilitarian", "deontological"]),
-    block: params.block as Block,
-    demographics: null,
-    survey: {
-      value: {},
-      timestamp: null
-    },
-    choseToHitOptionsSet: getRandomArrayItem(["1", "2", "3"]),
-    preDiscussionChoseToHit: null,
-    llmConversationMessages: null,
-    postDiscussionChoseToHit: null,
-    referenceFormSubmissionID: null
-  });
+	const [loadingSavedData, setLoadingSavedData] = useState<boolean>(true);
 
-  const goToNextFormPage = () => {
+	let bias: Bias;
 
-    if (currentFormPageIndex >= formPages.length - 1) {
-      setShouldSubmitUserFormData(true);
-    }
+	if (ENFORCE_BIAS && biases.includes(ENFORCE_BIAS)) {
+		bias = ENFORCE_BIAS as Bias;
+	}
 
-    setCurrentFormPageIndex(o => o + 1);
+	else {
+		bias = getRandomArrayItem(biases) as Bias;
+	}
 
-    localStorage.setItem("userFormData", JSON.stringify(userFormData));
-    localStorage.setItem("currentFormPageIndex", JSON.stringify(currentFormPageIndex));
+	const [userFormData, setUserFormData] = useState<UserFormData>({
+		prolificID: null,
+		bias,
+		block: params.block as Block,
+		demographics: null,
+		survey: {
+			value: {},
+			timestamp: null
+		},
+		choseToHitOptionsSet: getRandomArrayItem(["1", "2", "3"]),
+		preDiscussionChoseToHit: null,
+		llmConversationMessages: null,
+		postDiscussionChoseToHit: null,
+		referenceFormSubmissionID: null
+	});
 
-  }
+	const goToNextFormPage = () => {
 
-  const submitUserFormData = async () => {
+		if (currentFormPageIndex >= formPages.length - 1) {
+			setShouldSubmitUserFormData(true);
+		}
 
-    const res = await axios.post("/api/submitUserFormData", { userFormData });
-    setProlificCC(res.data.prolificCC);
+		setCurrentFormPageIndex(o => o + 1);
 
-    if (res.status == 200) {
-      localStorage.clear();
-    }
+		localStorage.setItem("userFormData", JSON.stringify(userFormData));
+		localStorage.setItem("currentFormPageIndex", JSON.stringify(currentFormPageIndex));
 
-  }
+	}
 
-  useEffect(() => {
+	const submitUserFormData = async () => {
 
-    console.log(userFormData.bias);
+		const res = await axios.post("/api/submitUserFormData", { userFormData });
+		setProlificCC(res.data.prolificCC);
 
-    const savedUserFormDataString = localStorage.getItem("userFormData");
-    const savedCurrentFormPageIndexString = localStorage.getItem("currentFormPageIndex");
+		if (res.status == 200) {
+			localStorage.clear();
+		}
 
-    if (savedUserFormDataString && savedCurrentFormPageIndexString) {
+	}
 
-      const savedUserFormData = JSON.parse(savedUserFormDataString);
-      const savedCurrentFormPageIndex = JSON.parse(savedCurrentFormPageIndexString);
+	useEffect(() => {
 
-      if (savedUserFormData.block != params.block) {
-        setLoadingSavedData(false);
-        return;
-      }
+		console.log("Assigned bias: " + userFormData.bias);
 
-      setUserFormData(savedUserFormData);
-      setCurrentFormPageIndex(savedCurrentFormPageIndex);
+		const savedUserFormDataString = localStorage.getItem("userFormData");
+		const savedCurrentFormPageIndexString = localStorage.getItem("currentFormPageIndex");
 
-    }
+		if (savedUserFormDataString && savedCurrentFormPageIndexString) {
 
-    setLoadingSavedData(false);
+			const savedUserFormData = JSON.parse(savedUserFormDataString);
+			const savedCurrentFormPageIndex = JSON.parse(savedCurrentFormPageIndexString);
 
-  }, [])
+			if (savedUserFormData.block != params.block) {
+				setLoadingSavedData(false);
+				return;
+			}
 
-  const formPages = [
-    <ConsentFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      key="consent"
-    />,
-    <ProlificIDFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      key="prolificID"
-    />,
-    <WelcomeFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      key="welcome"
-    />,
-    <PrimaryTaskIntroFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      key="primaryTaskIntro"
-    />,
-    <DemographicsFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      userFormData={userFormData}
-      key="demographics"
-    />,
+			setUserFormData(savedUserFormData);
+			setCurrentFormPageIndex(savedCurrentFormPageIndex);
 
-    <SurveyItemsFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      title="I See Myself As Someone Who"
-      surveyItemQuestionCategory={{
-        name: "personality",
-        questions: surveyItemQuestions.personality
-      }}
-      key="personalityPreDicussionFormPage"
-    />,
+		}
 
-    <SurveyItemsFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      surveyItemQuestionCategory={{
-        name: "individualismCollectivismScale",
-        questions: surveyItemQuestions.individualismCollectivismScale,
-      }}
-      key="individualismCollectivismScalePreDicussion"
-    />,
+		setLoadingSavedData(false);
 
-    <SurveyItemsFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      numberedAgreementLevelLabels={10}
-      surveyItemQuestionCategory={{
-        name: "aiAttitudeScale",
-        questions: surveyItemQuestions.aiAttitudeScale,
-      }}
-      key="aiAttitudeScalePreDicussion"
-    />,
+	}, [])
 
-    <SurveyItemsFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      surveyItemQuestionCategory={{
-        name: "pttForHuman",
-        questions: surveyItemQuestions.pttForHuman,
-      }}
-      title="This Scale Refers to Your Trust in Humans"
-      key="pttForHumanPreDicussion"
-    />,
+	const formPages = [
+		<ConsentFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			key="consent"
+		/>,
+		<ProlificIDFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			key="prolificID"
+		/>,
+		<WelcomeFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			key="welcome"
+		/>,
+		<PrimaryTaskIntroFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			key="primaryTaskIntro"
+		/>,
+		<DemographicsFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			userFormData={userFormData}
+			key="demographics"
+		/>,
 
-    <SurveyItemsFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      surveyItemQuestionCategory={{
-        name: "pttForAI",
-        questions: surveyItemQuestions.pttForAI,
-      }}
-      title="This Scale Refers to Your Trust in AI"
-      key="pttForAIPreDicussion"
-    />,
+		<SurveyItemsFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			title="I See Myself As Someone Who"
+			surveyItemQuestionCategory={{
+				name: "personality",
+				questions: surveyItemQuestions.personality
+			}}
+			key="personalityPreDicussionFormPage"
+		/>,
 
-    <ChoseToHitFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      userFormDataChoseToHitKey="preDiscussionChoseToHit"
-      optionsSet={userFormData.choseToHitOptionsSet}
-      key="preDiscussionChoseToHit"
-    />,
-    <LLMConversationFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      bias={userFormData.bias}
-      referenceFormSubmissionID={userFormData.referenceFormSubmissionID}
-      choseToHitOptionsSet={userFormData.choseToHitOptionsSet}
-      key="llmConversation"
-    />,
-    <ChoseToHitFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      userFormDataChoseToHitKey="postDiscussionChoseToHit"
-      optionsSet={userFormData.choseToHitOptionsSet}
-      title="Reselect Your Choice After Your Discussions With LLM Agent"
-      key="postDiscussionChoseToHit"
-    />,
-    <SurveyItemsFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      numberedAgreementLevelLabels={7}
-      surveyItemQuestionCategory={{
-        name: "postTaskMDMTPart1",
-        questions: surveyItemQuestions.postTaskMDMTPart1,
-      }}
-      title="Please Rate The AI Scale"
-      minAgreementLabel="Not at all"
-      maxAgreementLabel="Very"
-      doesNotFitOption={true}
-      key="postTaskMDMTPart1"
-    />,
-    <SurveyItemsFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      numberedAgreementLevelLabels={7}
-      surveyItemQuestionCategory={{
-        name: "postTaskMDMTPart2",
-        questions: surveyItemQuestions.postTaskMDMTPart2,
-      }}
-      title="Please Rate The AI Scale"
-      minAgreementLabel="Not at all"
-      maxAgreementLabel="Very"
-      doesNotFitOption={true}
-      key="postTaskMDMTPart2"
-    />,
-    <SurveyItemsFormPage
-      goToNextFormPage={goToNextFormPage}
-      setUserFormData={setUserFormData}
-      numberedAgreementLevelLabels={7}
-      surveyItemQuestionCategory={{
-        name: "miscQuestions",
-        questions: userFormData.block == "1" ? surveyItemQuestions.miscQuestions.slice(0, -1) : surveyItemQuestions.miscQuestions,
-      }}
-      minAgreementLabel=""
-      maxAgreementLabel=""
-      key="miscQuestions"
-    />,
-  ];
+		<SurveyItemsFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			surveyItemQuestionCategory={{
+				name: "individualismCollectivismScale",
+				questions: surveyItemQuestions.individualismCollectivismScale,
+			}}
+			key="individualismCollectivismScalePreDicussion"
+		/>,
 
-  useEffect(() => {
-    if (shouldSubmitUserFormData) {
-      submitUserFormData();
-    }
-  }, [shouldSubmitUserFormData, userFormData]);
+		<SurveyItemsFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			numberedAgreementLevelLabels={10}
+			surveyItemQuestionCategory={{
+				name: "aiAttitudeScale",
+				questions: surveyItemQuestions.aiAttitudeScale,
+			}}
+			key="aiAttitudeScalePreDicussion"
+		/>,
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [currentFormPageIndex]);
+		<SurveyItemsFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			surveyItemQuestionCategory={{
+				name: "pttForHuman",
+				questions: surveyItemQuestions.pttForHuman,
+			}}
+			title="This Scale Refers to Your Trust in Humans"
+			key="pttForHumanPreDicussion"
+		/>,
 
-  const copyUserFormDataToClipboard = () => {
-    navigator.clipboard.writeText(JSON.stringify(userFormData));
-    toast("Raw data copied to clipboard!");
-  }
+		<SurveyItemsFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			surveyItemQuestionCategory={{
+				name: "pttForAI",
+				questions: surveyItemQuestions.pttForAI,
+			}}
+			title="This Scale Refers to Your Trust in AI"
+			key="pttForAIPreDicussion"
+		/>,
 
-  if (loadingSavedData) {
-    return <Loading/>
-  }
+		<ChoseToHitFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			userFormDataChoseToHitKey="preDiscussionChoseToHit"
+			optionsSet={userFormData.choseToHitOptionsSet}
+			key="preDiscussionChoseToHit"
+		/>,
+		<LLMConversationFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			bias={userFormData.bias}
+			referenceFormSubmissionID={userFormData.referenceFormSubmissionID}
+			choseToHitOptionsSet={userFormData.choseToHitOptionsSet}
+			key="llmConversation"
+		/>,
+		<ChoseToHitFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			userFormDataChoseToHitKey="postDiscussionChoseToHit"
+			optionsSet={userFormData.choseToHitOptionsSet}
+			title="Reselect Your Choice After Your Discussions With LLM Agent"
+			key="postDiscussionChoseToHit"
+		/>,
+		<SurveyItemsFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			numberedAgreementLevelLabels={7}
+			surveyItemQuestionCategory={{
+				name: "postTaskMDMTPart1",
+				questions: surveyItemQuestions.postTaskMDMTPart1,
+			}}
+			title="Please Rate The AI Scale"
+			minAgreementLabel="Not at all"
+			maxAgreementLabel="Very"
+			doesNotFitOption={true}
+			key="postTaskMDMTPart1"
+		/>,
+		<SurveyItemsFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			numberedAgreementLevelLabels={7}
+			surveyItemQuestionCategory={{
+				name: "postTaskMDMTPart2",
+				questions: surveyItemQuestions.postTaskMDMTPart2,
+			}}
+			title="Please Rate The AI Scale"
+			minAgreementLabel="Not at all"
+			maxAgreementLabel="Very"
+			doesNotFitOption={true}
+			key="postTaskMDMTPart2"
+		/>,
+		<SurveyItemsFormPage
+			goToNextFormPage={goToNextFormPage}
+			setUserFormData={setUserFormData}
+			numberedAgreementLevelLabels={7}
+			surveyItemQuestionCategory={{
+				name: "miscQuestions",
+				questions: userFormData.block == "1" ? surveyItemQuestions.miscQuestions.slice(0, -1) : surveyItemQuestions.miscQuestions,
+			}}
+			minAgreementLabel=""
+			maxAgreementLabel=""
+			key="miscQuestions"
+		/>,
+	];
 
-  return (
+	useEffect(() => {
+		if (shouldSubmitUserFormData) {
+			submitUserFormData();
+		}
+	}, [shouldSubmitUserFormData, userFormData]);
 
-    <div className="my-16 flex justify-center">
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, [currentFormPageIndex]);
 
-      {formPages[currentFormPageIndex] || (
-        <div className="flex flex-col text-center items-center">
-          <span className="font-bold text-6xl">
-            Thank you!
-          </span>
-          <span className="font-thin text-3xl w-[45rem] mt-6">
-            Your feedback plays a key role in helping us better understand the topic.
-          </span>
+	const copyUserFormDataToClipboard = () => {
+		navigator.clipboard.writeText(JSON.stringify(userFormData));
+		toast("Raw data copied to clipboard!");
+	}
 
-          <Card className="w-96 mt-12">
-            <CardHeader>
-              <CardTitle className="text-2xl">
-                Return to Prolific
-              </CardTitle>
-              <CardDescription>
-                Click the link below to return to Prolific and recieve your compensation.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {prolificCC ? (
-                <span className="uppercase text-green-500 font-semibold">
-                  You can now return to Prolific with the button below
-                </span>
-              ) : (
-                <span className="uppercase text-destructive font-semibold">
-                  Please wait! Only refresh the page if the completion code does not load
-                </span>
-              )}
+	if (loadingSavedData) {
+		return <Loading />
+	}
 
-              <div className="flex flex-col items-center gap-y-2 mt-6">
+	return (
 
-                <Button
-                  variant="outline"
-                  disabled={!prolificCC}
-                  onClick={() => { window.open(`https://app.prolific.com/submissions/complete?cc=${prolificCC}`) }}
-                  className="hover:cursor-pointer w-fit"
-                >
-                  {prolificCC ? (
-                    <SquareArrowOutUpRightIcon />
-                  ) : (
-                    <Loader2Icon className="animate-spin" />
-                  )}
-                  Return to Prolific
-                </Button>
+		<div className="my-16 flex justify-center">
 
-                <span className="text-muted-foreground">
-                  OR
-                </span>
+			{formPages[currentFormPageIndex] || (
+				<div className="flex flex-col text-center items-center">
+					<span className="font-bold text-6xl">
+						Thank you!
+					</span>
+					<span className="font-thin text-3xl w-[45rem] mt-6">
+						Your feedback plays a key role in helping us better understand the topic.
+					</span>
 
-                <div className="flex gap-x-2">
-                  <span className="font-semibold">
-                    Prolific CC:
-                  </span>
-                  <span>
-                    {prolificCC || <Loader2Icon className="animate-spin" />}
-                  </span>
-                </div>
+					<Card className="w-96 mt-12">
+						<CardHeader>
+							<CardTitle className="text-2xl">
+								Return to Prolific
+							</CardTitle>
+							<CardDescription>
+								Click the link below to return to Prolific and recieve your compensation.
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							{prolificCC ? (
+								<span className="uppercase text-green-500 font-semibold">
+									You can now return to Prolific with the button below
+								</span>
+							) : (
+								<span className="uppercase text-destructive font-semibold">
+									Please wait! Only refresh the page if the completion code does not load
+								</span>
+							)}
 
-                <div className="flex flex-col mt-8 gap-y-4">
-                  <span>
-                    Stuck on loading? Copy the raw data and send it to the study administrator manually.
-                  </span>
-                  <Button 
-                    variant="secondary" 
-                    className="w-fit self-center hover:cursor-pointer"
-                    onClick={copyUserFormDataToClipboard}
-                  >
-                    <CopyIcon/>
-                    Click to copy
-                  </Button>
-                </div>
+							<div className="flex flex-col items-center gap-y-2 mt-6">
 
-              </div>
+								<Button
+									variant="outline"
+									disabled={!prolificCC}
+									onClick={() => { window.open(`https://app.prolific.com/submissions/complete?cc=${prolificCC}`) }}
+									className="hover:cursor-pointer w-fit"
+								>
+									{prolificCC ? (
+										<SquareArrowOutUpRightIcon />
+									) : (
+										<Loader2Icon className="animate-spin" />
+									)}
+									Return to Prolific
+								</Button>
 
-            </CardContent>
-          </Card>
+								<span className="text-muted-foreground">
+									OR
+								</span>
 
-        </div>
-      )}
-    </div>
+								<div className="flex gap-x-2">
+									<span className="font-semibold">
+										Prolific CC:
+									</span>
+									<span>
+										{prolificCC || <Loader2Icon className="animate-spin" />}
+									</span>
+								</div>
 
-  )
+								<div className="flex flex-col mt-8 gap-y-4">
+									<span>
+										Stuck on loading? Copy the raw data and send it to the study administrator manually.
+									</span>
+									<Button
+										variant="secondary"
+										className="w-fit self-center hover:cursor-pointer"
+										onClick={copyUserFormDataToClipboard}
+									>
+										<CopyIcon />
+										Click to copy
+									</Button>
+								</div>
+
+							</div>
+
+						</CardContent>
+					</Card>
+
+				</div>
+			)}
+		</div>
+
+	)
 
 }

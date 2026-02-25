@@ -33,6 +33,7 @@ export async function promptGemini(messages: Array<object>) {
 
 }
 
+export const biases = ["neutral", "utilitarian", "deontological"];
 export type Bias = "neutral" | "utilitarian" | "deontological";
 
 export type Block = "1" | "2" | "3";
@@ -64,6 +65,9 @@ export interface SurveyItemQuestionCategory {
 export type ChoseToHitOptionsSet = "1" | "2" | "3";
 export type ChoseToHitOption = "barrier" | "pedestrians";
 
+export const authorTypes = ["user", "model"];
+export type AuthorType = "user" | "model";
+
 export interface ChoseToHit {
 	selectedOption: ChoseToHitOption,
 	confidence: number
@@ -93,7 +97,7 @@ export interface HomeFormPageProps {
 }
 
 export interface LLMConversationMessage {
-	from: "model" | "user",
+	from: AuthorType,
 	content: string,
 	visibleToUser: boolean,
 	timestamp: number | null
@@ -101,7 +105,7 @@ export interface LLMConversationMessage {
 
 export interface LLMConversationSummaryData {
 	content: string,
-	by: "model" | "user"
+	by: AuthorType
 }
 
 export const llmConversationMessageContentMinLength = 100;

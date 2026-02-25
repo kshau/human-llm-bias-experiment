@@ -1,7 +1,8 @@
 import FormSubmission from "@/lib/db/schemas/FormSubmission";
-import { getRandomArrayItem, LLMConversationSummaryData } from "@/lib/utils";
+import { authorTypes, getRandomArrayItem, LLMConversationSummaryData } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
+const { ENFORCE_SUMMARIES_BY } = process.env;
 
 export async function POST(request: NextRequest) {
 
@@ -17,10 +18,12 @@ export async function POST(request: NextRequest) {
 
         let summarizeReferenceLLMConversationBy;
 
-        if (referenceFormSubmissionDoc.block == "1") {
+        if (ENFORCE_SUMMARIES_BY && authorTypes.includes(ENFORCE_SUMMARIES_BY)) {
+            summarizeReferenceLLMConversationBy = ENFORCE_SUMMARIES_BY;
+        }
 
+        else if (referenceFormSubmissionDoc.block == "1") {
             summarizeReferenceLLMConversationBy = getRandomArrayItem(["user", "model"]);
-
         }
 
         else {
