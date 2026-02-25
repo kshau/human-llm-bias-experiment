@@ -1,8 +1,7 @@
+import { ENFORCE_SUMMARIES_BY } from "@/lib/config";
 import FormSubmission from "@/lib/db/schemas/FormSubmission";
 import { authorTypes, getRandomArrayItem, LLMConversationSummaryData } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
-
-const { ENFORCE_SUMMARIES_BY } = process.env;
 
 export async function POST(request: NextRequest) {
 

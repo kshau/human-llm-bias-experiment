@@ -5,12 +5,16 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 Create a `.env` file:
 
 ```env
-# OpenRouter
-OPENROUTER_API_KEY="YOUR OPENROUTER API KEY"
-OPENROUTER_MODEL="YOUR MODEL ROUTER MODEL" # eg. google/gemini-flash-1.5
+# 0 = prod, 1 = dev
+DEV=1
 
-# MongoDB
-MONGODB_CONNECTION_STRING="YOUR MONGODB CONNECTION STRING"
+OPENROUTER_API_KEY="YOUR OPENROUTER API KEY"
+OPENROUTER_MODEL="YOUR OPENROUTER MODEL"
+
+MONGODB_CONNECTION_STRING_DEV="YOUR DEV MONGODB CONNECTION STRING"
+MONGODB_CONNECTION_STRING_PROD="YOUR PROD MONGODB CONNECTION STRING"
+
+PROLIFIC_CC="YOUR PROLIFIC CC"
 ```
 
 
@@ -25,6 +29,8 @@ pnpm dev
 # or
 bun dev
 ```
+
+You can also configure certain settings in `src/lib/config.ts`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

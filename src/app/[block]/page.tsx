@@ -17,9 +17,7 @@ import { ProlificIDFormPage } from "@/components/home-form-pages/ProlificIDFormP
 import { PrimaryTaskIntroFormPage } from "@/components/home-form-pages/PrimaryTaskIntroFormPage";
 import { Loading } from "@/components/Loading";
 import { toast } from "sonner"
-
-const ENFORCE_BIAS = process.env.NEXT_PUBLIC_ENFORCE_BIAS;
-
+import { ENFORCE_BIAS } from "@/lib/config";
 
 export default function Home() {
 
