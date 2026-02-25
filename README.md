@@ -31,6 +31,7 @@ bun dev
 ```
 
 You can also configure certain settings in `src/lib/config.ts`
+Custom summary assignment logic can be edited in `src\app\api\getRandomReferenceFormSubmissionData\route.ts`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
